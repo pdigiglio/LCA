@@ -14,7 +14,7 @@ exchange coupling coefficient J, number of spin sites N and doubled Trotter numb
 Data analysis
 ---------
 
-In the .cc some functions such as `Reticolo::media()` are defined, that allows to calculate mean and Standard Deviation of Mean (SDM).
+In the *.cc* file some functions such as `Reticolo::media()` are defined, that allows to calculate mean and Standard Deviation of Mean (SDM).
 However, the file *analisi.cc* contains tools for binning data obtained from "reticolo_2d" in cluster of variable size d and study them as function of d.
 
 
