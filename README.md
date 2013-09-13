@@ -20,7 +20,7 @@ Data analysis
 ---------
 
 In the *.cc* file some functions such as `Reticolo::media()` are defined, that allows to calculate mean and Standard Deviation of Mean (SDM).
-However, the file *analisi.cc* contains tools for binning data obtained from "reticolo_2d" in cluster of variable size d and study them as function of d.
+However, the *analisi.cpp* contains tools for binning data contained in *data.dat* (created by execution of *./reticolo_2d*) in cluster of variable size _d_ and study them as function of _d_.
 
 
 [1]: http://fisica.mib.infn.it/pages/it/chi-siamo/persone/who.php?user=pepe&lang=IT "Go to personal homepage"
