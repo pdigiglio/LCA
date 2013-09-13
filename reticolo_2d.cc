@@ -474,7 +474,7 @@ Reticolo::forced_transition (void) {
 	bool visited = true;
 	/* controllo se la placca e' stata gia' visitata */
 	short int ic = (short) 2 * Reticolo::spin(x[0], x[1]) - 1;
-	if ( sito[ x[0] ][ x[1] ].lckd ^ sito[ x[0] ][ x[1] + ic ].lckd )
+	if ( sito[ x[0] ][ x[1] ].lckd ^ sito[ x[0] ][ ( M + x[1] + ic ) % M ].lckd )
 		visited = false;
 
 	ic = (short) 2 * Reticolo::spin(np[0], mp[0]) - 1;
