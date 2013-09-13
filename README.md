@@ -1,15 +1,16 @@
 Description
 ===========================
 
-This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin chain) .
+This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin chain) at low temperatures.
 <!--
 under the supervision of professor [M. Pepe] [1].
 -->
-The aim of the project is to evaulate staggered susceptivity, uniform susceptivity and linear energy density for the spin chain.
+The aim of the project is to evaluate staggered susceptivity, uniform susceptivity and linear energy density of the spin chain.
 
 
-The main function is located in "reticolo_2d.cpp" while "global.h" contains chain parameters like inverse temperature B,
-exchange coupling coefficient J, number of spin sites N and doubled Trotter number M.
+The `main()` function is located in *reticolo_2d.cpp*.
+The header *global.h* contains chain parameters like inverse temperature *B*,
+exchange coupling coefficient *J*, number of spin sites *N* and doubled Trotter number *M*.
 
 Data analysis
 ---------
