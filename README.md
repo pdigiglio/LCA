@@ -2,6 +2,7 @@ Description
 ===========================
 
 This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin chain) at low temperatures.
+The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is _sperimentally_ prooved to describe the physical system.
 <!--
 under the supervision of professor [M. Pepe] [1].
 -->
