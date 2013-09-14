@@ -1,8 +1,8 @@
 Description
 ===========================
 
-This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin chain) at low temperatures.
-The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is _sperimentally_ prooved to describe the physical system.
+This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin __chain__) at low temperatures.
+The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sperimentally__ prooved to describe the physical system.
 <!--
 under the supervision of professor [M. Pepe] [1].
 -->
@@ -22,6 +22,7 @@ Data analysis
 
 In the *.cc* file some functions such as `Reticolo::media()` are defined, that allows to calculate mean and Standard Deviation of Mean (SDM).
 However, the *analisi.cpp* contains tools for binning data contained in *data.dat* (created by execution of *./reticolo_2d*) in cluster of variable size _d_ and study them as function of _d_.
+Every line of *data.dat* is expected to be formatted as `"%f, %f, %f\n"` to be correctly read by *analisi*.
 
 
 [1]: http://fisica.mib.infn.it/pages/it/chi-siamo/persone/who.php?user=pepe&lang=IT "Go to personal homepage"
