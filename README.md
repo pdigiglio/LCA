@@ -6,11 +6,21 @@ The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sp
 <!--
 under the supervision of professor [M. Pepe] [1].
 -->
+
+Purpose
+------------
+
 The aim of the project is to evaluate staggered susceptivity, uniform susceptivity and linear energy density of the spin chain.
 
 
-The main routine for generating data (measures) is stored in *reticolo_2d.** files, which needs also *global.h* header to be included.
-A *Makefile* is also given, which allows to compile the main program (please, set your own compile flags since specific options such as `-march=core2` are selected).
+Code
+-----------------
+
+The main routine for generating data (measures) is stored in *reticolo_2d.** files, which need also *global.h* header to be included.
+A very simple *Makefile* is also given, which allows to compile the main program with `gcc` suite (please, set your own compile flags since specific options such as `-march=core2` are selected).
+It also tries to automatically detect your machine architeture.
+
+
 The `main()` function is located in *reticolo_2d.cpp*; class `Reticolo` is defined and implemented in *reticolo_2d.h* and *reticolo_2d.cc*, respectively.
 The header *global.h* contains chain parameters like inverse temperature *B*,
 exchange coupling coefficient *J*, number of spin sites *N* and doubled Trotter number *M*.
