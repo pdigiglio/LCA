@@ -63,24 +63,24 @@ main ( int argc, char *argv[] ) {
 	 * -------------------------------------------------------------*/
 
 	/* valori delle misure */
-	float **f = NULL;
-	float temp;
+	double **f = NULL;
+	double temp;
 
 	/* media ed errore */
-	float mean[3] = { (float) 0, (float) 0, (float) 0 };
-	float err[3] =  { (float) 0, (float) 0, (float) 0 };
+	double mean[3] = { (double) 0, (double) 0, (double) 0 };
+	double err[3] =  { (double) 0, (double) 0, (double) 0 };
 
 	/* acquisisco i valori e calcolo la media */
 	unsigned int l, i;
 	for ( l = 0; !( feof(pFile) ); l ++ ) {	
 		/* alloco la memoria per i valori in input */
-		f = (float **) realloc( f, (l + 1) * sizeof(float *) );
+		f = (double **) realloc( f, (l + 1) * sizeof(double *) );
 		if ( f == NULL ) {
 			fprintf ( stderr, "\ndynamic memory reallocation failed\n" );
 			exit (EXIT_FAILURE);
 		}
 
-		f[l] = (float *) malloc( 3 * sizeof(float) );
+		f[l] = (double *) malloc( 3 * sizeof(double) );
 		if ( f[l] == NULL ) {
 			fprintf ( stderr, "\ndynamic memory allocation failed\n" );
 			exit (EXIT_FAILURE);
@@ -88,30 +88,30 @@ main ( int argc, char *argv[] ) {
 		
 		/* azzero i valori di '**f' */
 		for ( unsigned short int j = 0; j < 3; j ++ )
-			f[l][j] = (float) 0;
+			f[l][j] = (double) 0;
 
 		/* calcolo i cluster */
 		for ( i = 0; i < ord && !( feof(pFile) ); i ++ ) {
 			/* prima colonna */
-			fscanf(pFile, "%f, ", &temp);
+			fscanf(pFile, "%lf, ", &temp);
 			f[l][0] += temp;
 
 			/* seconda colonna */
-			fscanf(pFile, "%f, ", &temp);
+			fscanf(pFile, "%lf, ", &temp);
 			f[l][1] += temp;
 
 			/* terza colonna */
-			fscanf(pFile, "%f\n", &temp);
+			fscanf(pFile, "%lf\n", &temp);
 			f[l][2] += temp;
 		}
 		
 		/* normalizzo i cluster ed aggiorno le medie */
 		for ( unsigned short int j = 0; j < 3; j ++ ) {
-			f[l][j] = (float) f[l][j] / i;
-//			printf("%f\t", f[l][j]);
-//			printf("%u\t%f\n", ord * l, f[l]);
+			f[l][j] = (double) f[l][j] / i;
+//			printf("%lf\t", f[l][j]);
+//			printf("%u\t%lf\n", ord * l, f[l]);
 			mean[j] += f[l][j];
-			err[j] += pow( f[l][j], (float) 2);
+			err[j] += pow( f[l][j], (double) 2);
 		}
 //		printf("\n");
 	}
@@ -127,14 +127,14 @@ main ( int argc, char *argv[] ) {
 	printf("%u\t", ord);
 	for ( unsigned short int j = 0; j < 3; j ++ ) {
 		/* normalizzo la media */
-		mean[j] = (float) mean[j] / l;
+		mean[j] = (double) mean[j] / l;
 
 		/* calcolo la varianza */
 		err[j] = err[j] / l;
-		err[j] = (float) sqrt( err[j] - pow( mean[j], (float) 2) );
+		err[j] = (double) sqrt( err[j] - pow( mean[j], (double) 2) );
 
 		/* stampo a schermo varianza e sdom */
-		printf( "%g\t%g\t", err[j], err[j] / sqrt(l) );
+		printf( "%lg\t%lg\t", err[j], err[j] / sqrt(l) );
 	}
 	printf("\n");
 
@@ -143,7 +143,7 @@ main ( int argc, char *argv[] ) {
 	 *-----------------------------------------------------------------------------*/
 	
 	/* coefficienti di normalizzazione */
-	float norm[3] = { (float) 1, (float) 1, (float) 1 };
+	double norm[3] = { (double) 1, (double) 1, (double) 1 };
 
 	/* apro un file di output (lo creo) */
 	FILE *oFile = fopen( "ac.dat" , "w" );
@@ -160,9 +160,9 @@ main ( int argc, char *argv[] ) {
 			
 			for ( unsigned short int j = 0; j < 3; j ++ ) {
 			/* variabile temporanea */
-			temp = (float) 0;
+			temp = (double) 0;
 			/* riutilizzo la variabile per l'errore */
-			err[j] = (float) 0;
+			err[j] = (double) 0;
 
 			/* aggiorno il j-esimo autocorrelatore e il suo errore */
 			for ( unsigned int s = 0; s < (unsigned) l - t; s ++ ) {
@@ -171,7 +171,7 @@ main ( int argc, char *argv[] ) {
 			}
 
 			/* normalizzo auto-correlatore e errore */
-			temp = (float) temp / ( l - t );
+			temp = (double) temp / ( l - t );
 			/* uso la correzione di Bessel */
 			err[j] = sqrt( ( err[j] / (l - t) - pow (temp, 2) ) / (l - t - 1) );
 
@@ -180,7 +180,7 @@ main ( int argc, char *argv[] ) {
 				norm[j] = temp - pow(mean[j], 2);
 			
 			/* stampo i valori normalizzati */
-			fprintf( oFile, "%g\t%g\t", (float) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
+			fprintf( oFile, "%lg\t%lg\t", (double) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
 		}
 		fprintf( oFile, "\n");
 	}

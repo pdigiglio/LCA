@@ -11,10 +11,9 @@ CXX = g++
 MARCH = core2
 MASM = intel
 # Standard di linguaggio
-STD = c++11
+STD = gnu++11 
 # Opzioni
-CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) \
-		   -masm=$(MASM) -mtune=$(MARCH) -fopenmp -lm
+CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) -masm=$(MASM) -mtune=$(MARCH) -fopenmp -lm
 
 # % = $(MAIN); la funzione parte solo 
 # se esistono $(MAIN).cpp e 'Makefile'

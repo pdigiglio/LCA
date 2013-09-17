@@ -92,8 +92,8 @@ Reticolo::fill (void) {
 
 	/* aggiorno le medie e le sdom */
 	for ( unsigned short int i = 0; i < 3; i ++ ) {
-		msr.mean[i] += msr.val[i];
-		msr.sdom[i] += pow( msr.val[i], 2 );
+		msr.mean[i] += (double) msr.val[i];
+		msr.sdom[i] += (double) pow( msr.val[i], 2 );
 	}
 } /* -----  end of method Reticolo::fill  ----- */
 
@@ -533,7 +533,7 @@ Reticolo::optional_decay (void) {
 	} else {
 		/* se placca non visitata "estraggo" la transizione */
 		if ( (long double) rand()/RAND_MAX > Reticolo::prob() ) {
-			t = Reticolo::spin(x[0], x[1]) == Reticolo::spin(np[0], mp[0]);
+			t = Reticolo::spin( x[0], x[1] ) == Reticolo::spin(np[0], mp[0]);
 			a = 0;
 		}
 	}
@@ -589,10 +589,10 @@ Reticolo::r (unsigned short int i) {
 		e ++;
 
 	/* arrotondo */
-	float k = floorf(msr.sdom[i] * pow(10., e) + 0.5) / pow(10., e);
-	float g = floorf(msr.mean[i] * pow(10., e) + 0.5) / pow(10., e);
+	double k = floorf(msr.sdom[i] * pow(10., e) + 0.5) / pow(10., e);
+	double g = floorf(msr.mean[i] * pow(10., e) + 0.5) / pow(10., e);
 
-	printf("%f\t%f\t", g, k);
+	printf("%g\t%g\t", g, k);
 } /* -----  end of method Reticolo::r  ----- */
 
 /*
@@ -606,8 +606,8 @@ void
 Reticolo::mean (void) {
 	/* normalizzo le medie */
 	for ( unsigned int i = 0; i < 3; i++ ) {
-		msr.mean[i] = (float) msr.mean[i]/msr.lenght;
-		msr.sdom[i] = msr.sdom[i] / msr.lenght;
+		msr.mean[i] = (double) msr.mean[i] / msr.lenght;
+		msr.sdom[i] = (double) msr.sdom[i] / msr.lenght;
 		/* uso il '-1' per la correzione di Bessel */
 		msr.sdom[i] = sqrt( ( msr.sdom[i] - pow( msr.mean[i], 2) ) / ( msr.lenght - 1) );
 	}
@@ -623,15 +623,15 @@ Reticolo::mean (void) {
 void
 Reticolo::print_results (void) {
 	/* suscettività uniforme */
-	msr.mean[0] = (float) B * msr.mean[0]/((float) N );
-	msr.sdom[0] = (float) B * msr.sdom[0]/((float) N );
+	msr.mean[0] = (double) B * msr.mean[0]/((double) N );
+	msr.sdom[0] = (double) B * msr.sdom[0]/((double) N );
 
 	/* suscettività alternata */
-	msr.mean[1] = (float) B * msr.mean[1]/((float) 4 * N * M );
-	msr.sdom[1] = (float) B * msr.sdom[1]/((float) 4 * N * M );
+	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M );
+	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M );
 
-	msr.mean[2] = ((float) J / (4 * M * N)) * msr.mean[2];
-	msr.sdom[2] = ((float) J / (4 * M * N)) * msr.sdom[2];
+	msr.mean[2] = ((double) J / (4 * M * N)) * msr.mean[2];
+	msr.sdom[2] = ((double) J / (4 * M * N)) * msr.sdom[2];
 
 	/* stampo i risultati sotto forma di tabella */	
 	printf( "# RISULTATI (N. sweep: %u)\n"

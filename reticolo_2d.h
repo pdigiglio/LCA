@@ -87,9 +87,9 @@ private:
 			 */
 			float val[3];
 			/* media */
-			float mean[3] = { (float) 0, (float) 0, (float) 0 };
+			double mean[3] = { (double) 0, (double) 0, (double) 0 };
 			/* deviazione standard della media */
-			float sdom[3] = { (float) 0, (float) 0, (float) 0 };
+			double sdom[3] = { (double) 0, (double) 0, (double) 0 };
 			/* numero di misure effettuate ('s' = sweep) */
 			unsigned int lenght = 0;
 		} msr;
