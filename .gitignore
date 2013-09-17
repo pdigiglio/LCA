@@ -1,7 +1,0 @@
-# Elenco delle estensioni dei file che Git deve ignorare in ogni sen-
-# so: non deve mostrare nei file "untracked" e non li deve aggiungere.
-#
-# Ignoro i file di dati
-*.dat
-# Ignoro i file di backup
-*~
