@@ -27,10 +27,12 @@ class Reticolo {
 		/* "suggestiva" rappresentazione a schermo del reticolo */
 		void print (void);
 
-		/* restituisce lo spin nel sito (n,m) */
+		/* restituisce lo spin nel sito (n, m) */
 		bool get_spin (unsigned int n, unsigned int m);
 		/* restituisce il numero di loop */
 		unsigned int get_lps (void);
+		/* restituisce il numero di decadimenti temporali */
+		unsigned int get_time_decay (void);
 		/* restituisce la misura 'i' (non normalizzata) */
 		float get_msr (unsigned short int i);
 
@@ -38,7 +40,7 @@ class Reticolo {
 		void mean (void);
 		/* stampa a schermo medie ed incertezze normalizzate */
 		void print_results (void);
-	private:
+private:
 		/*
 		 * parametri del reticolo: li metto in un vettore per poterli 
 		 * gestire con facilita' piu' avanti.
@@ -73,7 +75,9 @@ class Reticolo {
 		
 		/* numero di loop per ogni sweep */
 		unsigned short int lps = 0;
-		
+		/* numero di decadimenti temporali ad ogni sweep */
+		unsigned int td = 0;
+
 		/* contiene le grandezze misurate sul sistema */
 		struct Measure {
 			/* Indici:
@@ -90,9 +94,9 @@ class Reticolo {
 			unsigned int lenght = 0;
 		} msr;
 	
-		/* restituisce lo spin del sito (n,m) prima del flip */
+		/* restituisce lo spin del sito (n, m) prima del flip */
 		bool spin (unsigned int n, unsigned int m);
-		/* inizializza un loop dal sito (n,m) */
+		/* inizializza un loop dal sito (n, m) */
 		void loop (unsigned int n, unsigned int m);
 		/* inverte gli spin in un loop */
 		void flip (unsigned int n, unsigned int m, bool f);
@@ -116,7 +120,7 @@ class Reticolo {
 		/* probabilita' di transizione nel decadimento opzionale */
 		long double prob (void);
 
-		/* stampa i valori arrotondati di 'msr.{sdom[i],mean[i]}' */
+		/* stampa i valori arrotondati di msr.{var,sdom} */
 		void r (unsigned short int i);
 };
 

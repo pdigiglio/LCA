@@ -58,8 +58,8 @@ Reticolo::~Reticolo (void) {
  */
 void
 Reticolo::fill (void) {
-	/* azzero il numero di loop nello sweep corrente */
-//	lps = 0;
+	/* azzero loop e decadimenti temporali nello sweep corrente */
+	lps = 0; td = 0;
 
 	/* aggiorno il numero di misure */
 	msr.lenght ++;
@@ -84,7 +84,7 @@ Reticolo::fill (void) {
 			 * se il sito (n,m) non appartiene ad alcun cluster:
 			 * aggiorno il numero do loop
 			 */
-//			lps++;
+			lps ++;
 
 			/* faccio partire un loop dal sito (n,m) */
 			loop(n, m);
@@ -202,14 +202,14 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 	/* faccio evolvere il loop finche' non torno al p.to di partenza */
 	do {
 		/* (eventualmente) inverto gli spin */
-		Reticolo::flip(x[0], x[1], f );
+		Reticolo::flip( x[0], x[1], f );
 
 		/* 
 		 * la magnetizzazione uniforme è invariante per traslazione
 		 * temporale quindi la calcolo solo a t = 0
 		 */
 		if ( x[1] == 0 )
-			cu += Reticolo::spin(x[0], x[1]) - (float) 1/2;
+			cu += Reticolo::spin( x[0], x[1] ) - (float) 1/2;
 
 		/* calcolo la magnetizzazione alternata */
 		cs[ x[1] ] ++;
@@ -263,9 +263,21 @@ Reticolo::get_spin (unsigned int n, unsigned int m) {
  * ------------------------------------------------------------------
  */
 unsigned int
-Reticolo::get_lps (void) {
+Reticolo::get_lps ( void ) {
 	return lps;
 } /* -----  end of method Reticolo::get_lps  ----- */
+
+/*
+ * ------------------------------------------------------------------
+ *       Class: Reticolo
+ *      Method: get_time_decay
+ * Description: restituisce il numero di decadimenti temporali.
+ * ------------------------------------------------------------------
+ */
+unsigned int
+Reticolo::get_time_decay ( void ) {
+	return td;
+} /* -----  end of method Reticolo::get_time_decay  ----- */
 
 /*
  * ------------------------------------------------------------------
@@ -294,7 +306,6 @@ Reticolo::next_ene (unsigned int n, unsigned int m) {
 		fprintf(stderr, "Errore: due cluster passano per il sito (%u, %u)\n", n, m);
 		exit(EXIT_FAILURE);
 	}
-
 	/* blocco lo spin appena visitato */
 	sito[n][m].lckd = lckd;
 
@@ -459,6 +470,9 @@ Reticolo::forced_continuation (void) {
 	/* incremento la posizione lungo il tempo */
 	x[1] = (unsigned) ( M + x[1] + (int) ic ) % M;
 
+	/* incremento il contatore dei decadimenti temporali */
+	td ++;
+
 	return visited;
 } /* -----  end of method Reticolo::forced_continuation  ----- */
 
@@ -530,6 +544,8 @@ Reticolo::optional_decay (void) {
 	sito[ x[0] ][ x[1] ].p = a;
 	/* effettuo l'incremento */
 	x[a] = (unsigned) ( p[a] + x[a] + (int) ic) % p[a];
+	/* incremento il contatore del decadimento temporale */
+	td += a;
 
 	return (unsigned short int) 2 * visited + a;
 } /* -----  end of method Reticolo::optional_decay  ----- */
@@ -592,7 +608,8 @@ Reticolo::mean (void) {
 	for ( unsigned int i = 0; i < 3; i++ ) {
 		msr.mean[i] = (float) msr.mean[i]/msr.lenght;
 		msr.sdom[i] = msr.sdom[i] / msr.lenght;
-		msr.sdom[i] = sqrt( ( msr.sdom[i] - pow( msr.mean[i], 2) ) / msr.lenght );
+		/* uso il '-1' per la correzione di Bessel */
+		msr.sdom[i] = sqrt( ( msr.sdom[i] - pow( msr.mean[i], 2) ) / ( msr.lenght - 1) );
 	}
 } /* -----  end of method Reticolo::mean  ----- */
 

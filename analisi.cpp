@@ -10,7 +10,9 @@
  *
  *  			  [output] Il programma suddivide i dati del file in
  *  			 cluster di dimensione {ord} e ne fa la media. Poi
- *  			 calcola varianza e deviazione standard.
+ *  			 calcola varianza e deviazione standard stampandole a
+ *  			 schermo. Nel frattempo crea un file contenente gli
+ *  			 autocorrelatori.
  *
  *        Version:  1.0
  *        Created:  07/09/2013 11:02:39
@@ -26,31 +28,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <errno.h>
 #include <string.h>
 
 int
 main ( int argc, char *argv[] ) {
 	/* ordine della suddivisione */
-	unsigned int ord = 1;
+	unsigned short int ord = 1;
+	
+	/* controllo che argomenti da linea di comando */ 
 	if ( argc == 3 )
 		ord = atoi( argv[argc - 1] );
-	else
-		fprintf( stdout, "Troppi argomenti!\n");
+	else if ( argc == 2 )
+		fprintf( stderr, " > Variabile 'ord' impostata di default a %hu\n", ord );
+	else { /* se sono sbagliati */
+		if ( argc > 3 )
+			fprintf( stderr, " > Troppi argomenti!\n");
+		else if ( argc < 2 )
+			fprintf( stderr, " > Manca il nome del file!\n");
+
+		/* esco dal programma */
+		exit(EXIT_FAILURE);
+	}
+
+	/* (apro il) file contenente i dati */
+	FILE *pFile = fopen( argv[1], "r" );
+	if ( pFile == NULL ) {
+		fprintf( stderr, " > Impossibile aprire il file '%s': %s\n", argv[1], strerror(errno) );
+		exit(EXIT_FAILURE);
+	}
+
+	/* ---------------------------------------------------------------
+	 *  CALCOLO MEDIE ED ERRORI
+	 * -------------------------------------------------------------*/
 
 	/* valori delle misure */
 	float **f = NULL;
 	float temp;
 
 	/* media ed errore */
-	float mean[3] = { (float) 0, (float) 0, (float) 0};
-	float err[3] =  { (float) 0, (float) 0, (float) 0};
-
-	/* file contenente i dati */
-	FILE *pFile = fopen(argv[1], "r");
-	if ( pFile == NULL ) {
-		fprintf(stderr, "Errore nell'apertura del file: %s\n", argv[1]);
-		exit(EXIT_FAILURE);
-	}
+	float mean[3] = { (float) 0, (float) 0, (float) 0 };
+	float err[3] =  { (float) 0, (float) 0, (float) 0 };
 
 	/* acquisisco i valori e calcolo la media */
 	unsigned int l, i;
@@ -87,7 +105,7 @@ main ( int argc, char *argv[] ) {
 			f[l][2] += temp;
 		}
 		
-//		printf("%u: ", l);
+		/* normalizzo i cluster ed aggiorno le medie */
 		for ( unsigned short int j = 0; j < 3; j ++ ) {
 			f[l][j] = (float) f[l][j] / i;
 //			printf("%f\t", f[l][j]);
@@ -97,9 +115,15 @@ main ( int argc, char *argv[] ) {
 		}
 //		printf("\n");
 	}
-	/* chiudo il file */
-	fclose(pFile);
 
+	/* chiudo il file di input */
+	if( fclose( pFile ) == EOF ) {
+		fprintf ( stderr, " > Impossibile chiudere il file '%s'; %s\n",
+				argv[1], strerror(errno) );
+		exit (EXIT_FAILURE);
+	}
+
+	/* stampo ordine, varianza e SDM correttamente normalizzate */
 	printf("%u\t", ord);
 	for ( unsigned short int j = 0; j < 3; j ++ ) {
 		/* normalizzo la media */
@@ -114,42 +138,59 @@ main ( int argc, char *argv[] ) {
 	}
 	printf("\n");
 
-
+	/*-----------------------------------------------------------------------------
+	 *  AUTOCORRELATORI
+	 *-----------------------------------------------------------------------------*/
+	
 	/* coefficienti di normalizzazione */
-	float norm[3] = { (float) 1, (float) 1, (float) 1};
+	float norm[3] = { (float) 1, (float) 1, (float) 1 };
 
 	/* apro un file di output (lo creo) */
-	FILE *oFile = NULL;
-	oFile = fopen( "ac.dat" , "w" );
-	if ( pFile == NULL ) {
-		fprintf(stderr, "Errore nell'apertura del file: %s\n", argv[1]);
-		exit(EXIT_FAILURE);
+	FILE *oFile = fopen( "ac.dat" , "w" );
+	if ( oFile == NULL ) {
+		fprintf ( stderr, " > Impossibile aprire il file '%s'; %s\n",
+				"ac.dat", strerror(errno) );
+		exit (EXIT_FAILURE);
 	}
 
 	/* calcolo gli autocorrelatori */
 	for ( unsigned short int t = 0; t < 30; t ++ ) {
 			/* stampo la coordinata temporale */
-			fprintf( oFile, "%hu\t", t);
+			fprintf( oFile, "%hu\t", t );
 			
 			for ( unsigned short int j = 0; j < 3; j ++ ) {
 			/* variabile temporanea */
 			temp = (float) 0;
+			/* riutilizzo la variabile per l'errore */
+			err[j] = (float) 0;
 
-			/* calcolo l'i-esimo autocorrelatore */
-			for ( unsigned int s = 0; s < (unsigned) l - t; s ++ )
+			/* aggiorno il j-esimo autocorrelatore e il suo errore */
+			for ( unsigned int s = 0; s < (unsigned) l - t; s ++ ) {
 				temp += f[s][j] * f[s + t][j];
+				err[j] += pow( f[s][j] * f[s + t][j], 2 );
+			}
+
+			/* normalizzo auto-correlatore e errore */
+			temp = (float) temp / ( l - t );
+			/* uso la correzione di Bessel */
+			err[j] = sqrt( ( err[j] / (l - t) - pow (temp, 2) ) / (l - t - 1) );
 
 			/* salvo il primo valore per normalizzare gli altri */
 			if ( t == 0 )
-				norm[j] = temp/(l - t) - pow(mean[j], 2);
+				norm[j] = temp - pow(mean[j], 2);
 			
 			/* stampo i valori normalizzati */
-			fprintf( oFile, "%g\t", (float) ( temp/(l - t) - pow(mean[j], 2) ) / norm[j] );
+			fprintf( oFile, "%g\t%g\t", (float) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
 		}
 		fprintf( oFile, "\n");
 	}
 
-	/* chiudo il file */
-	fclose(oFile);
+	/* chiudo il file di output */
+	if( fclose(oFile) == EOF ) {
+		fprintf ( stderr, " > Impossibile chiudere '%s'; %s\n",
+				"ac.dat", strerror(errno) );
+		exit (EXIT_FAILURE);
+	}
+
 	exit(EXIT_SUCCESS);
 }				/* ----------  end of function main  ---------- */

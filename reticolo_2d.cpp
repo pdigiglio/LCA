@@ -21,6 +21,8 @@
 
 #include "./reticolo_2d.cc"
 #include <ctime>
+#include <errno.h>
+#include <string.h>
 
 int
 main ( void ) {
@@ -40,21 +42,62 @@ main ( void ) {
 		exit(EXIT_FAILURE);
 	}
 
+	/* n. loop, 1 / (n. loop), decadimenti temporali */
+	float msr[3][2] = {};
 	/* faccio evolvere il sistema e effettuo le misure */
-	for ( unsigned int i = 0; i < 100000; i++ ) {
+	for ( unsigned int i = 0; i < MSR; i++ ) {
 		reticolo.fill();
+
+		/* esporto i valori delle misure in un file di dati */
 		fprintf( oFile, "%f, ", (float) B * reticolo.get_msr( 0 ) / ( (float) N ) );
 		fprintf( oFile, "%f, ", (float) B * reticolo.get_msr( 1 ) / ( (float) 4 * N * M ) );
 		fprintf( oFile, "%f\n", ( (float) J / ( 4 * M * N ) ) * reticolo.get_msr( 2 ) );
+		
+		/* faccio la media delle lunghezze dei loop */
+		msr[0][0] += (float) reticolo.get_lps();
+		msr[1][0] += (float) N * M / reticolo.get_lps();
+		msr[2][0] += (float) reticolo.get_time_decay() / ( N * M );
+
+		/* errori */
+		msr[0][1] += pow( (float) reticolo.get_lps(), 2 );
+		msr[1][1] += pow( (float) N * M / reticolo.get_lps(), 2 );
+		msr[2][1] += pow( (float) reticolo.get_time_decay() / ( N * M), 2 );
 //		reticolo.measure();
 	}
 
 	/* chiudo il file */
 	fclose(oFile);
 
+
+	/* file output */ 
+	char outFile_file_name[] = "./lunghezze.dat";
+	FILE *outFile = fopen( outFile_file_name, "a" );
+
+	if ( outFile == NULL ) {
+		fprintf ( stderr, "couldn't open file '%s'; %s\n",
+				outFile_file_name, strerror(errno) );
+		exit (EXIT_FAILURE);
+	}
+
+	fprintf( outFile, "#J\tB\tN\tM\t2JB/M\t\tlps\t\td(lps)\t\tlen\t\td(len)\t\tt-dec\t\td(t-dec)\n" );
+	fprintf( outFile, "%u\t%u\t%u\t%u\t%f\t", J, B, N, M, (float) 2*B*J/M);
+	for ( unsigned short j = 0; j < 3; j ++ ){
+		msr[j][0] = msr[j][0] / MSR;
+		msr[j][1] = sqrt( ( msr[j][1] / MSR - pow( msr[j][0], 2 ) ) / MSR );
+		fprintf( outFile, "%f\t%f\t", msr[j][0], msr[j][1]);
+	}
+	fprintf( outFile, "\n");
+	
+	if( fclose(outFile) == EOF ) { /* close output file */
+		fprintf ( stderr, "couldn't close file '%s'; %s\n",
+				outFile_file_name, strerror(errno) );
+		exit (EXIT_FAILURE);
+	}
+
+
 //	reticolo.print();
 	reticolo.mean();
-	reticolo.print_results();
+//	reticolo.print_results();
 
 	exit(EXIT_SUCCESS);
 } /* ----------  end of function main  ---------- */
