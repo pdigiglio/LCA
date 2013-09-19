@@ -17,8 +17,8 @@ Code
 -----------------
 
 The main routine for generating data (measures) is stored in *reticolo_2d.** files, which need also *global.h* header to be included.
-A very simple *Makefile* is also given, which allows to compile the main program with `gcc` suite (please, set your own compile flags since specific options such as `-march=core2` are selected).
-It also tries to automatically detect your machine architeture.
+A very simple *Makefile* is also given, which allows to compile the main program with the `gcc` suite (please, set your own compile flags since specific options such as `-march=core2` are selected).
+It also tries to automatically detect your machine architeture and suggests you the best `-march=` flag option.
 
 
 The `main()` function is located in *reticolo_2d.cpp*; class `Reticolo` is defined and implemented in *reticolo_2d.h* and *reticolo_2d.cc*, respectively.
