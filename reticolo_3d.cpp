@@ -26,15 +26,19 @@ main ( void ) {
 	srand(time(NULL));
 
 	/* dichiaro un reticolo */
-	Reticolo prova;
+	Reticolo reticolo;
 
-	for ( unsigned int i = 0; i < 200; i ++ ) {
+	for ( unsigned int i = 0; i < 20000; i ++ ) {
 //		printf("Sweep: %u ################################\n", i);
-		prova.fill();
+		reticolo.fill();
+
+		fprintf( stdout, "%f, ", ((double) B / (N * M)) * reticolo.get_msr(0));
+		fprintf( stdout, "%f, ", ((double) B / (4 * N * M * T)) * reticolo.get_msr(1));
+		fprintf( stdout, "%f\n", ((double) J / (N * M * T)) * reticolo.get_msr(2));
 	}
 
-	prova.mean();
-	prova.print_results();
+//	reticolo.mean();
+//	reticolo.print_results();
 
 	exit(EXIT_SUCCESS);
 } /* ----------  end of function main  ---------- */

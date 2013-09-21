@@ -26,6 +26,8 @@ class Reticolo {
 		bool get_spin (unsigned int n, unsigned int m, unsigned int t);
 		/* restituisce il numero di loop nello sweep corrente */
 		unsigned int get_lps (void);
+		/* restituisce il valore attuale della misura 'i' */
+		float get_msr (unsigned short int i);
 
 		/* calcola medie ed incertezze (non normalizzate) */
 		void mean (void);
