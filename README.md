@@ -4,9 +4,8 @@ Description
 This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin __chain__) at low temperatures.
 The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sperimentally__ prooved to describe the physical system.
 
-<!---
-This work is based on Wiese-Ying and Beard works.
--->
+
+This work is mostly based on [Wiese-Ying] [4] and [Beard] [5] studies.
 
 Purpose
 ------------
@@ -43,8 +42,10 @@ To compile it you need to use the following syntax (i.e. to link ROOT library in
 
 	g++ fit.cpp -o fit `root-config --libs --cflags` [...]
 
-You will also to have ROOT suite installed on your locale.
+You will also need the ROOT suite installed on your locale to have the compile process work.
 
 [1]: http://fisica.mib.infn.it/pages/it/chi-siamo/persone/who.php?user=pepe&lang=IT "Go to personal homepage"
 [2]: http://www.gnuplot.info/ "Go to gnuplot homepage"
 [3]: http://root.cern.ch/drupal/ "Go to ROOT homepage"
+[4]: http://arxiv.org/abs/hep-lat/9204015v1 "Blockspin Cluster Algorithms for Quantum Spin Systems"
+[5]: http://dspace.mit.edu/handle/1721.1/38414#files-area "Improvements in cluster algorithms for quantum spin systems"
