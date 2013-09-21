@@ -3,11 +3,11 @@
 #ifndef  global_INC
 #define  global_INC
 
-#define N 4	/* numero atomi asse x */
-#define M 4	/* numero atomi asse y */
-#define T 12	/* 4 * numero di Trotter */
+#define N 6	/* numero atomi asse x */
+#define M 6	/* numero atomi asse y */
+#define T 256	/* 4 * numero di Trotter */
 
-#define B 1
+#define B 5
 #define J 1
 
 #endif   /* ----- #ifndef global_INC  ----- */
