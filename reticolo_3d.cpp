@@ -28,8 +28,8 @@ main ( void ) {
 	/* dichiaro un reticolo */
 	Reticolo prova;
 
-	for ( unsigned int i = 0; i < 10000; i ++ ) {
-		printf("Sweep: %u ################################\n", i);
+	for ( unsigned int i = 0; i < 200; i ++ ) {
+//		printf("Sweep: %u ################################\n", i);
 		prova.fill();
 	}
 

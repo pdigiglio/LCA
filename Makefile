@@ -23,10 +23,10 @@ $(MAIN): %: %.cpp %.cc %.h Makefile ${INCLUDE}
 	@ echo 'Architettura rilevata:\t\t' ` gcc -march=native -Q --help=target | grep --text march | cut -f3 `
 	@ echo -e 'Architettura selezionata:\t' $(MARCH)
 	@ echo
-	$(CXX) $< -o $@ $(CXXFLAGS)
+	$(CXX) $< -o $@.a $(CXXFLAGS)
 	@ echo
 	
 # pulisce la directory
 clean:
-	@ -rm -rf *.d *.o *.tmp $(MAIN)
+	@ -rm -rf *.d *.o *.tmp *.a
 .PHONY: clean

@@ -45,7 +45,7 @@ Reticolo::fill ( void ) {
 	 * aggiorno il numero di misure (e sweep) e calcolo il valore
 	 * (booleano) della variabile 'lckd'
 	 */
-	lckd = ++msr.lenght % 2;
+	lckd = ( ++ msr.lenght ) % 2;
 
 	/* inizializzo a zero le suscettività ed energie (temporanee) */
 	for ( unsigned short int i = 0; i < 3; i ++ )
@@ -130,11 +130,12 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 		 * la magnetizzazione uniforme è invariante per traslazione
 		 * temporale quindi la calcolo solo a t = 0
 		 */
-		if ( !( x[2] ) )
+		if ( !x[2] )
 			cu += Reticolo::spin( x[0], x[1], x[2] ) - (float) 1/2;
 
 		/* aggiorno la magnetizzazione alternata */
 		cs[ x[2] ] ++;
+//		printf("t: %u\tcu[%u]: %u\n", x[2], x[2], cs[ x[2] ]);
 
 		/* faccio evolvere le coordinate 'x[]' e misuro l'energia */
 		msr.val[2] += Reticolo::next_ene( x[0], x[1], x[2] );
@@ -142,14 +143,18 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 		Reticolo::flip( x[0], x[1], x[2] );
 	} while ( x[0] != n || x[1] != m || x[2] != t);
 
+//	printf("\n");
 	/* aggiorno il valore della suscettività uniforme */
 	msr.val[0] += (float) pow( cu, 2 );
 	
+//	float temp = 0;
 	/* aggiorno la suscettività alternata */
 	for ( unsigned short int k = 0; k < T; k ++ ) {
 		/* controllo che 'cs[k]' non sia nullo */
 		if ( cs[k] ) msr.val[1] += (float) pow( cs[k], 2 );
+//		temp += cs[k];
 	}
+//	msr.val[1] += pow (temp, 2);
 } /* -----  end of method Reticolo::loop  ----- */
 
 /*
@@ -542,7 +547,7 @@ Reticolo::optional_decay ( void ) {
  */
 long double
 Reticolo::prob (void) {
-	return (long double) 2/( 1 + expl( (long double) 4*B*J/T ) );
+	return (long double) 2/( 1 + expl( (long double) 4 * B * J / T ) );
 } /* -----  end of method Reticolo::prob  ----- */
 
 /*
