@@ -17,8 +17,10 @@
  * ==================================================================
  */
 
-#include "./reticolo_3d.cc"
+#include "./reticolo-2d.cc"
 #include <ctime>
+#include <cerrno>
+#include <cstring>
 
 int
 main ( void ) {
@@ -27,18 +29,38 @@ main ( void ) {
 
 	/* dichiaro un reticolo */
 	Reticolo reticolo;
+	
+//	/* nome file output per storico misure */
+//	char oFile_file_name[] = "./data.dat"; 
+//	/* file di output per lo storico delle misure */
+//	FILE *oFile = fopen( oFile_file_name, "w" );
+//	
+//	/* controllo che il file sia aperto correttamente */
+//	if ( oFile == NULL ) {
+//		fprintf ( stderr, " > Impossibile aprire il file '%s': %s\n",
+//				oFile_file_name, strerror(errno) );
+//		exit (EXIT_FAILURE);
+//	}
 
-	for ( unsigned int i = 0; i < 20000; i ++ ) {
+	/* genero le misure e le scrivo nel file */
+	for ( unsigned int i = 0; i < MSR; i ++ ) {
 //		printf("Sweep: %u ################################\n", i);
 		reticolo.fill();
 
-		fprintf( stdout, "%f, ", ((double) B / (N * M)) * reticolo.get_msr(0));
-		fprintf( stdout, "%f, ", ((double) B / (4 * N * M * T)) * reticolo.get_msr(1));
-		fprintf( stdout, "%f\n", ((double) J / (N * M * T)) * reticolo.get_msr(2));
+//		fprintf( oFile, "%f, ", ((double) B / (N * M)) * reticolo.get_msr(0));
+//		fprintf( oFile, "%f, ", ((double) B / (4 * N * M * T)) * reticolo.get_msr(1));
+//		fprintf( oFile, "%f\n", ((double) J / (N * M * T)) * reticolo.get_msr(2));
 	}
 
-//	reticolo.mean();
-//	reticolo.print_results();
+	/* chiudo il file output */
+//	if( fclose(oFile) == EOF ) {
+//		fprintf ( stderr, " > Impossibile chiudere il file '%s': %s\n",
+//				oFile_file_name, strerror(errno) );
+//		exit (EXIT_FAILURE);
+//	}
+
+	reticolo.mean();
+	reticolo.print_results();
 
 	exit(EXIT_SUCCESS);
 } /* ----------  end of function main  ---------- */

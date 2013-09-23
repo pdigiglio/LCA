@@ -1,4 +1,4 @@
-#include "./reticolo_3d.h"
+#include "./reticolo-2d.h"
 
 #include <cmath>
 /* per l'operatore bitwise XOR (^) */
@@ -121,23 +121,23 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 	/* magnetizzazione uniforme */
 	float cu = (float) 0;
 	/* magnetizzazione alternata inizializzata a zero */
-	unsigned int cs[T] = {};
+	unsigned short int cs = 0;
 
 	/* faccio evolvere il loop finche' non torno al p.to di partenza */
 	do {
-//		printf("%u %u %u\n", x[0], x[1], x[2]);
 		/* 
 		 * la magnetizzazione uniforme è invariante per traslazione
 		 * temporale quindi la calcolo solo a t = 0
 		 */
 		if ( !x[2] )
 			cu += Reticolo::spin( x[0], x[1], x[2] ) - (float) 1/2;
-
+	
 		/* aggiorno la magnetizzazione alternata */
-		cs[ x[2] ] ++;
+		cs ++;
 
 		/* faccio evolvere le coordinate 'x[]' e misuro l'energia */
 		msr.val[2] += Reticolo::next_ene( x[0], x[1], x[2] );
+
 		/* inverto gli spin e controllo sovrapposizioni di loop */
 		Reticolo::flip( x[0], x[1], x[2] );
 	} while ( x[0] != n || x[1] != m || x[2] != t);
@@ -146,10 +146,7 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 	msr.val[0] += (float) pow( cu, 2 );
 	
 	/* aggiorno la suscettività alternata */
-	for ( unsigned short int k = 0; k < T; k ++ ) {
-		/* controllo che 'cs[k]' non sia nullo */
-		if ( cs[k] ) msr.val[1] += (float) pow( cs[k], 2 );
-	}
+	msr.val[1] += pow( cs, 2 );
 } /* -----  end of method Reticolo::loop  ----- */
 
 /*
@@ -230,7 +227,6 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 
 	/* controllo se l'evoluzione nel sito corrente è già stabilita */
 	if ( sito[n][m][t].ckd == lckd ) {
-//		printf("Visita\n");
 		/* se la transizione è temporale */
 		if ( sito[n][m][t].p )
 			Reticolo::tt();
@@ -240,7 +236,6 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 		/* non assegno energia alla placca */
 		return (float) 0;
 	} else {
-//		printf("Prima visita\n");
 		/* variabile ausiliaria per l'esponente */
 		float c = (float) 4 * B * J / T;
 		/* 
@@ -272,10 +267,10 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 	}
 
 	/* solo in caso di placca non valida: stampa errore ed esce */
-	fprintf( stderr, "[next_ene] Trovata placca anomala! (%u, %u, %u)\n", xp[0][0], xp[0][1], xp[0][2]);
+	fprintf( stderr, "[next_ene] Placca anomala: (%u, %u, %u)\n", xp[0][0], xp[0][1], xp[0][2]);
 	exit(EXIT_FAILURE);
 
-	/* evita errori di compilazione ma non viene mai eseguito */
+	/* evita errori di compilazione ma non viene _mai_ eseguito */
 	return (float) 0;
 } /* -----  end of method Reticolo::next_ene  ----- */
 
@@ -297,14 +292,14 @@ Reticolo::type (void) {
 	bool a = Reticolo::ps( 0 ) ^ Reticolo::ps( 1 );
 	bool b = Reticolo::ps( 1 ) ^ Reticolo::ps( 2 );
 	/* 
-	 * 'a' e 'b' basterebbero per identificare la placca, se le plac-
-	 * che fossero sempre corrette, ma uso 'c' come controllo
+	 * 'a' e 'b' bastano ad identificare la placca: ma uso 'c' come 
+	 * test di controllo in fase di debugging
 	 */
-	bool c = Reticolo::ps( 0 ) ^ Reticolo::ps( 3 );
+//	bool c = Reticolo::ps( 0 ) ^ Reticolo::ps( 3 );
 
-	if ( ( !a && !b ) && !c ) return 1; /* cont. forz. */
-	else if ( ( a && !b ) && !c ) return 2; /* tran. forz. */
-	else if ( ( a && b ) && c ) return 3; /* dec. op. */
+	if ( ( !a && !b ) /* && !c */ ) return 1; /* cont. forz. */
+	else if ( ( a && !b ) /* && !c */ ) return 2; /* tran. forz. */
+	else if ( ( a && b ) /* && c */ ) return 3; /* dec. op. */
 
 	/* il valore di default è "non riconosciuta" */
 	return (unsigned short) 0;
@@ -579,8 +574,8 @@ Reticolo::r ( unsigned short int i ) {
 		e ++;
 
 	/* arrotondo (le copie di) errore e media */
-	double k = floorf(msr.sdom[i] * pow(10., e) + 0.5) / pow(10., e);
-	double g = floorf(msr.mean[i] * pow(10., e) + 0.5) / pow(10., e);
+	double k = floorf(msr.sdom[i] * pow(10., e) + .5) / pow(10., e);
+	double g = floorf(msr.mean[i] * pow(10., e) + .5) / pow(10., e);
 
 	/* stampo a schermo */
 	printf("%f\t%f\t", g, k);
@@ -599,7 +594,8 @@ Reticolo::mean (void) {
 	for ( unsigned short int i = 0; i < 3; i ++ ) {	
 		msr.mean[i] = (double) msr.mean[i] / msr.lenght;
 		msr.sdom[i] = (double) msr.sdom[i] / msr.lenght;
-		msr.sdom[i] = sqrt( (double) ( msr.sdom[i] - pow( msr.mean[i], 2 ) ) / msr.lenght );
+		/* uso la correzione di Bessel */
+		msr.sdom[i] = sqrt( (double) ( msr.sdom[i] - pow( msr.mean[i], 2 ) ) / ( msr.lenght - 1 ) );
 	}
 } /* -----  end of method Reticolo::mean  ----- */
 
@@ -613,12 +609,12 @@ Reticolo::mean (void) {
 void
 Reticolo::print_results (void) {
 	/* suscettività uniforme */
-	msr.mean[0] = (double) B * msr.mean[0]/((double) N * M );
-	msr.sdom[0] = (double) B * msr.sdom[0]/((double) N * M );
+	msr.mean[0] = ((double) B / ( N * M )) * msr.mean[0];
+	msr.sdom[0] = ((double) B / ( N * M )) * msr.sdom[0];
 
 	/* suscettività alternata */
-	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M * T );
-	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M * T );
+	msr.mean[1] = ((double) B / ( 4 * N * M * T * T )) * msr.mean[1];
+	msr.sdom[1] = ((double) B / ( 4 * N * M * T * T )) * msr.sdom[1];
 
 	/* energia */
 	msr.mean[2] = ((double) J / ( M * N * T )) * msr.mean[2];
@@ -628,10 +624,8 @@ Reticolo::print_results (void) {
 	printf( "# RISULTATI (N. sweep: %u)\n"
 			"#J\tB\tN\tM\tT\tUS\t\terr\t\tSS\t\terr\t\tEN\t\terr\n"
 			"%u\t%u\t%u\t%u\t%u\t", msr.lenght, J, B, N, M, T );
-
 	for ( unsigned int i = 0; i < 3; i++ )
-		printf("%f\t%f\t", msr.mean[i], msr.sdom[i]);
-//		Reticolo::r(i);
+		Reticolo::r(i);
 
 	printf("\n");
 } /* -----  end of method Reticolo::print_results  ----- */
