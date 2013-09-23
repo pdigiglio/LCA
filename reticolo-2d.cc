@@ -441,7 +441,6 @@ Reticolo::ps ( signed short int i ) {
  */
 void
 Reticolo::tt ( void ) {
-//	printf("Transizione temporale\n");
 	x[2] = ( T + x[2] + ( 2 * Reticolo::spin( x[0], x[1], x[2] ) - 1 ) ) % T;
 } /* -----  end of method Reticolo::tt  ----- */
 
@@ -455,7 +454,6 @@ Reticolo::tt ( void ) {
  */
 void
 Reticolo::st ( void ) {
-//	printf("Transizione spaziale\n");
 	x[v] = ( p[v] + x[v] + ( 2 * !( i_x % 2 ) - 1 ) ) % p[v];
 } /* -----  end of method Reticolo::st  ----- */
 
@@ -559,23 +557,29 @@ Reticolo::prob (void) {
  * Description: arrotonda media ed errore alle stesse cifre signifi-
  * 				cative (in modo che abbiano senso statisticamente) e
  * 				li stampa a schermo.
+ * 				NOTA: 'msr.sdom[i]' è sempre positivo.
  * ------------------------------------------------------------------
  */
 void
 Reticolo::r ( unsigned short int i ) {
-	/* NOTA: 'msr.sdom[i]' è positivo */
-	unsigned short int e = 0;
+	/*
+	 * incremento dell'esponente: se 'msr.sdom[i] >= 10', cerco tra
+	 * gli esponenti più alti di 0
+	 */
+	signed short int j = 2 * ( msr.sdom[i] >= 10 ) - 1;
+
+	signed short int e = 0;
 	/* calcolo le cifre significative */
-	while ( ( pow(10, 1 - e) < msr.sdom[i] ) ^ ( msr.sdom[i] <= pow(10, -e) ) )
-		e ++;
+	while ( ( pow(10, 1 + e) < msr.sdom[i] ) ^ ( msr.sdom[i] <= pow(10, e) ) )
+		e += j;
 
 	/* controllo se tenere una o due cifre decimali */
-	if ( msr.sdom[i] * pow(10, e) < 3 )
-		e ++;
+	if ( msr.sdom[i] / pow(10, e) < 3 )
+		e += j;
 
 	/* arrotondo (le copie di) errore e media */
-	double k = floorf(msr.sdom[i] * pow(10., e) + .5) / pow(10., e);
-	double g = floorf(msr.mean[i] * pow(10., e) + .5) / pow(10., e);
+	double k = floorf(msr.sdom[i] / pow(10., e) + .5) * pow(10., e);
+	double g = floorf(msr.mean[i] / pow(10., e) + .5) * pow(10., e);
 
 	/* stampo a schermo */
 	printf("%f\t%f\t", g, k);

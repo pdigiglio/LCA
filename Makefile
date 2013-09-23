@@ -1,5 +1,5 @@
 # File (principale) da compilare
-MAIN = reticolo_3d
+MAIN = reticolo-2d
 INCLUDE = global.h 
 
 # Librerie aggiuntive che prevedo di inserire
