@@ -1,9 +1,9 @@
-# File da compilare
+# File (principale) da compilare
 MAIN = reticolo_3d
 INCLUDE = global.h 
 
 # Librerie aggiuntive che prevedo di inserire
-MODULES = 
+#MODULES = 
 
 # Compilatore c++
 CXX = g++
@@ -28,6 +28,10 @@ $(MAIN): %: %.cpp %.cc %.h Makefile $(INCLUDE)
 	
 # compilo il programma per interpolare i grafici
 fit: fit.cpp
+	$(CXX) $< `root-config --libs --cflags` -o $@.a $(CXXFLAGS)
+
+# compilo il programma per interpolare i grafici
+fit_risultati: fit_risultati.cpp
 	$(CXX) $< `root-config --libs --cflags` -o $@.a $(CXXFLAGS)
 
 # compilo il programma per interpolare i grafici
