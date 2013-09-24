@@ -18,6 +18,7 @@
  */
 
 #include "./reticolo-2d.cc"
+
 #include <ctime>
 #include <cerrno>
 #include <cstring>
@@ -30,6 +31,9 @@ main ( void ) {
 	/* dichiaro un reticolo */
 	Reticolo reticolo;
 	
+	/* variabile ausiliaria per l'interfaccia utente */
+	unsigned int percentage = MSR / 100;
+
 	/* nome file output per storico misure */
 	char oFile_file_name[] = "./data.dat"; 
 	/* file di output per lo storico delle misure */
@@ -44,8 +48,10 @@ main ( void ) {
 
 	/* genero le misure e le scrivo nel file */
 	for ( unsigned int i = 0; i < MSR; i ++ ) {
-		if ( ! (i % 1000) )
-			fprintf( stderr, "Sweep: %u ################################\n", i );
+		if ( ! ( i % percentage ) ) {
+			fprintf( stderr, "Sweep n. %u: %u %% complete\r", i, i/percentage );
+			fflush( stderr );
+		}
 
 		reticolo.fill();
 
