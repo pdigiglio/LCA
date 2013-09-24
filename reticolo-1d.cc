@@ -32,6 +32,11 @@ Reticolo::Reticolo ( void ) {
 			exit (EXIT_FAILURE);
 		}
 
+		/* Configurazioni iniziali:
+		 *  > ( n + m ) % 2. trans. forzata;
+		 *  > 1 (o 0). cont. forzata;
+		 *  > n % 2. dec. opzionale.
+		 */
 		for ( unsigned short int m = 0; m < M; m ++ ) {
 			sito[n][m].s = (bool) ( ( m + n ) % 2);
 			sito[n][m].lckd = lckd;
@@ -195,9 +200,7 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 	/* magnetizzazione uniforme */
 	float cu = (float) 0;
 	/* magnetizzazione alternata */
-	unsigned int cs[M];
-	for ( unsigned int t = 0; t < M; t ++ )
-		cs[t] = 0;
+	unsigned int cs = 0;
 
 	/* faccio evolvere il loop finche' non torno al p.to di partenza */
 	do {
@@ -212,7 +215,7 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 			cu += Reticolo::spin( x[0], x[1] ) - (float) 1/2;
 
 		/* calcolo la magnetizzazione alternata */
-		cs[ x[1] ] ++;
+		cs ++;
 		/* faccio evolvere le coordinate 'x[]' e misuro l'energia */
 		msr.val[2] += Reticolo::next_ene( x[0], x[1] );
 	} while ( x[0] != n || x[1] != m );
@@ -221,8 +224,7 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 	if ( cu /* != 0 */ )
 		msr.val[0] += (float) pow(cu, 2);
 	
-	for ( unsigned int t = 0; t < M; t ++ )
-		msr.val[1] += (float) pow( cs[t], 2. );
+	msr.val[1] += (float) pow( cs, 2 );
 } /* -----  end of method Reticolo::loop  ----- */
 
 /*
@@ -592,7 +594,7 @@ Reticolo::r (unsigned short int i) {
 	double k = floorf(msr.sdom[i] * pow(10., e) + 0.5) / pow(10., e);
 	double g = floorf(msr.mean[i] * pow(10., e) + 0.5) / pow(10., e);
 
-	printf("%g\t%g\t", g, k);
+	printf("%f\t%f\t", g, k);
 } /* -----  end of method Reticolo::r  ----- */
 
 /*
@@ -627,8 +629,8 @@ Reticolo::print_results (void) {
 	msr.sdom[0] = (double) B * msr.sdom[0]/((double) N );
 
 	/* suscettività alternata */
-	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M );
-	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M );
+	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M * M );
+	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M * M );
 
 	msr.mean[2] = ((double) J / (4 * M * N)) * msr.mean[2];
 	msr.sdom[2] = ((double) J / (4 * M * N)) * msr.sdom[2];
