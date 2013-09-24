@@ -578,11 +578,14 @@ Reticolo::r ( unsigned short int i ) {
 		e += j;
 
 	/* arrotondo (le copie di) errore e media */
-	double k = floorf(msr.sdom[i] / pow(10., e) + .5) * pow(10., e);
-	double g = floorf(msr.mean[i] / pow(10., e) + .5) * pow(10., e);
+//	double k = floorf(msr.sdom[i] / pow(10., e) + .5) * pow(10., e);
+//	double g = floorf(msr.mean[i] / pow(10., e) + .5) * pow(10., e);
 
 	/* stampo a schermo */
-	printf("%f\t%f\t", g, k);
+	printf( "%f\t%f\t",
+			floorf(msr.mean[i] / pow(10., e) + .5) * pow(10., e),
+			floorf(msr.sdom[i] / pow(10., e) + .5) * pow(10., e)
+	);
 } /* -----  end of method Reticolo::r  ----- */
 
 /*
