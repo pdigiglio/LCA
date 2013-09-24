@@ -14,6 +14,43 @@
  * ------------------------------------------------------------------
  */
 Reticolo::Reticolo ( void ) {
+	/* costruisco il reticolo */
+	sito = (Sito ***) malloc ( N * sizeof(Sito **) );
+	if ( sito == NULL ) {
+		fprintf ( stderr, "[ctor] (1) dynamic memory reallocation failed\n" );
+		exit (EXIT_FAILURE);
+	}
+
+	/*
+	 * parallelizzo solo i processi per cui il passo i-esimo non
+	 * dipende dal passo (i-1)-esimo, altrimenti ottengo un
+	 * risultato non corretto
+	 */
+	#pragma omp parallel for
+	for ( unsigned short int n = 0; n < N; n ++ ) {
+		sito[n] = (Sito **) malloc ( M * sizeof(Sito *) );
+		if ( sito[n] == NULL ) {
+			fprintf ( stderr, "[ctor] (2) dynamic memory allocation failed\n" );
+			exit (EXIT_FAILURE);
+		}
+
+		for ( unsigned short int m = 0; m < M; m ++ ) {
+			sito[n][m] = (Sito *) malloc ( T * sizeof(Sito) );
+			if ( sito[n][m] == NULL ) {
+				fprintf ( stderr, "[ctor] (3) dynamic memory reallocation failed\n" );
+				exit (EXIT_FAILURE);
+			}
+
+			/* Configurazioni iniziali:
+			 *  > ( n + m + t ) % 2. trans. forzata;
+			 *  > 1 (o 0). cont. forzata;
+			 */
+			for ( unsigned short int t = 0; t < T; t ++ ) {
+				sito[n][m][t].s = (bool) ( ( m + n + t ) % 2);
+				sito[n][m][t].ckd = lckd;
+			}
+		}
+	}
 } /* -----  end of method Reticolo::Reticolo (ctor)  ----- */
 
 /*
@@ -38,8 +75,8 @@ Reticolo::~Reticolo ( void ) {
  */
 void
 Reticolo::fill ( void ) {
-	/* azzero il numero di loop nello sweep corrente */
-//	lps = 0;
+	/* azzero il numero di loop/dec. temporali nello sweep corrente */
+	lps = 0; tds = 0;
 
 	/*
 	 * aggiorno il numero di misure (e sweep) e calcolo il valore
@@ -66,7 +103,7 @@ Reticolo::fill ( void ) {
 				 * se non è già contenuto in altri cluster aggiorno
 				 * il numero loop nello sweep corrente
 				 */
-//				lps ++;
+				lps ++;
 
 				/* faccio partire un loop dal sito (n, m, t) */
 				loop(n, m, t);
@@ -195,9 +232,21 @@ Reticolo::get_spin (unsigned int n, unsigned int m, unsigned int t) {
  * ------------------------------------------------------------------
  */
 unsigned int
-Reticolo::get_lps (void) {
+Reticolo::get_lps ( void ) {
 	return lps;
 } /* -----  end of method Reticolo::get_lps  ----- */
+
+/*
+ * ------------------------------------------------------------------
+ *       Class: Reticolo
+ *      Method: get_time_decays
+ * Description: 
+ * ------------------------------------------------------------------
+ */
+unsigned int
+Reticolo::get_time_decay ( void ) {
+	return tds;
+} /* -----  end of method Reticolo::get_time_decays  ----- */
 
 /*
  * ------------------------------------------------------------------
@@ -287,7 +336,7 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
  * ------------------------------------------------------------------
  */
 unsigned short int
-Reticolo::type (void) {
+Reticolo::type ( void ) {
 	/* identifico le placchette con i valori di 'a' e 'b' */
 	bool a = Reticolo::ps( 0 ) ^ Reticolo::ps( 1 );
 	bool b = Reticolo::ps( 1 ) ^ Reticolo::ps( 2 );
@@ -441,6 +490,8 @@ Reticolo::ps ( signed short int i ) {
  */
 void
 Reticolo::tt ( void ) {
+	/* aggiorno il numero di transizioni temporali */
+	++ tds;
 	x[2] = ( T + x[2] + ( 2 * Reticolo::spin( x[0], x[1], x[2] ) - 1 ) ) % T;
 } /* -----  end of method Reticolo::tt  ----- */
 
@@ -493,7 +544,7 @@ Reticolo::forced_continuation ( void ) {
  * ------------------------------------------------------------------
  */
 void
-Reticolo::forced_transition (void) {
+Reticolo::forced_transition ( void ) {
 	/* assegno le transizioni ai siti */
 	for ( unsigned short int i = 0; i < 3; i += 2 ) {
 		/* registro che il sito è stato controllato */
@@ -546,7 +597,7 @@ Reticolo::optional_decay ( void ) {
  * ------------------------------------------------------------------
  */
 long double
-Reticolo::prob (void) {
+Reticolo::prob ( void ) {
 	return (long double) 2/( 1 + expl( (long double) 4 * B * J / T ) );
 } /* -----  end of method Reticolo::prob  ----- */
 
@@ -596,7 +647,7 @@ Reticolo::r ( unsigned short int i ) {
  * ------------------------------------------------------------------
  */
 void
-Reticolo::mean (void) {
+Reticolo::mean ( void ) {
 	/* normalizzo le medie e calcolo gli errori */
 	for ( unsigned short int i = 0; i < 3; i ++ ) {	
 		msr.mean[i] = (double) msr.mean[i] / msr.lenght;
@@ -614,7 +665,7 @@ Reticolo::mean (void) {
  * ------------------------------------------------------------------
  */
 void
-Reticolo::print_results (void) {
+Reticolo::print_results ( void ) {
 	/* suscettività uniforme */
 	msr.mean[0] = ((double) B / ( N * M )) * msr.mean[0];
 	msr.sdom[0] = ((double) B / ( N * M )) * msr.sdom[0];

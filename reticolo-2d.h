@@ -26,6 +26,8 @@ class Reticolo {
 		bool get_spin (unsigned int n, unsigned int m, unsigned int t);
 		/* restituisce il numero di loop nello sweep corrente */
 		unsigned int get_lps (void);
+		/* restituisce il numero di decadimenti temporali */
+		unsigned int get_time_decay (void);
 		/* restituisce il valore attuale della misura 'i' */
 		float get_msr (unsigned short int i);
 
@@ -58,7 +60,7 @@ class Reticolo {
 		/* definisco il record 'st' e il tipo 'Sito' */
 		typedef struct st {
 			/* valore spin, tipo transizione ('p = 1' trans. temp.) */
-			bool s = true, p;
+			bool s, p;
 			/* indica se il sito appartiene gia' ad un cluster */
 			bool lckd = false;
 			/* 
@@ -67,8 +69,8 @@ class Reticolo {
 			 */
 			bool ckd = false;
 		} Sito;
-		/* costruisco il reticolo di spin */
-		Sito sito[N][M][T];
+		/* dichiaro il reticolo di spin (da espandere) */
+		Sito ***sito = NULL;
 
 		/* segnaposto per il loop (inizializzato a zero) */
 		unsigned int x[3];
@@ -80,7 +82,9 @@ class Reticolo {
 		bool v;
 		
 		/* numero di loop: da azzerare ad ogni sweep */
-		unsigned short int lps;
+		unsigned short int lps = 0;
+		/* numero di "time decays", da azzerare ad ogni sweep */
+		unsigned int tds = 0;
 		
 		/* contiene le grandezze misurate sul sistema */
 		struct Measure {
@@ -91,7 +95,7 @@ class Reticolo {
 			float val[3];
 			/* media, deviazione standard della media */
 			double mean[3] = {}, sdom[3] = {};
-			/* numero di misure effettuate ('s' = sweep) */
+			/* numero di misure effettuate */
 			unsigned int lenght = 0;
 		} msr;
 	
