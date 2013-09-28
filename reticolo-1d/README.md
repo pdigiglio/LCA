@@ -1,7 +1,8 @@
 Description
 ===========================
 
-This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin __chain__) at low temperatures.
+This sub-directory contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one dimension (i.e. a spin __chain__) at low temperatures.
+<!---
 The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sperimentally__ prooved to describe the physical system.
 
 
@@ -16,7 +17,7 @@ in which one loop at time is constructed and all the spin in it are flipped;
 in which the lattice is fully covered with loops that are randomly flipped with 50% of probability.
 
 This project is build upon the latter.
-
+-->
 
 Purpose
 ------------
@@ -61,5 +62,7 @@ You will also need the ROOT suite installed on your locale to have the compile p
 [1]: http://fisica.mib.infn.it/pages/it/chi-siamo/persone/who.php?user=pepe&lang=IT "Go to personal homepage"
 [2]: http://www.gnuplot.info/ "Go to gnuplot homepage"
 [3]: http://root.cern.ch/drupal/ "Go to ROOT homepage"
+<!---
 [4]: http://arxiv.org/abs/hep-lat/9204015v1 "Blockspin Cluster Algorithms for Quantum Spin Systems"
 [5]: http://dspace.mit.edu/handle/1721.1/38414#files-area "Improvements in cluster algorithms for quantum spin systems"
+-->
