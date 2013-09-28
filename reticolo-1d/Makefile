@@ -1,29 +1,31 @@
-# File da compilare
-MAIN = reticolo-1d 
+# Main file to compile
+MAIN = reticolo-1d
+# header to include
 INCLUDE = global.h
 
-# Librerie aggiuntive che prevedo di inserire
-MODULES = 
-
-# Compilatore c++
+# C++ compiler
 CXX = g++
-# Opzioni cpu-dipendenti
+
+# some cpu-dependent options
 MARCH = core2
 MASM = intel
-# Standard di linguaggio
-STD = gnu++11 
-# Opzioni
-CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) -masm=$(MASM) -mtune=$(MARCH) -fopenmp -lm
 
-# % = $(MAIN); la funzione parte solo 
-# se esistono $(MAIN).cpp e 'Makefile'
-$(MAIN): %: %.cpp %.cc %.h Makefile ${INCLUDE}
+# standard language
+STD = gnu++11 
+
+# compile options
+CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) \
+		   -masm=$(MASM) -mtune=$(MARCH) -fopenmp -lm
+
+# main function (to compile main source)
+$(MAIN): %: %.cpp %.cc %.h Makefile $(INCLUDE)
 	@ echo '#INFO'
 	@ echo 'Architettura rilevata:\t\t' ` gcc -march=native -Q --help=target | grep --text march | cut -f3 `
 	@ echo -e 'Architettura selezionata:\t' $(MARCH)
 	@ echo
 	$(CXX) $< -o $@ $(CXXFLAGS)
-	#
+	@ echo
+
 # compilo il programma per interpolare i grafici
 fit: fit.cpp
 	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
