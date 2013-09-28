@@ -5,7 +5,18 @@ This repository contains my C++ source code for simulating an Anti-Ferromagnetic
 The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sperimentally__ prooved to describe the physical system.
 
 
-This work is mostly based on [Wiese-Ying] [4] and [Beard] [5] studies.
+This work is mostly based on the studies of [Wiese-Ying] [4], who first adapted the Loop Cluster Algorithm (LCA) to spin lattices.
+Another useful reference is [Beard] [5] Ph.D. thesis, which exhaustively explains the alorithm details and extends it to continuum limit.
+
+
+There are two different and equivalent implementations of LCA:
+* __Single-cluster__
+in which one loop at time is constructed and all the spin in it are flipped;
+* __Multi-cluster__
+in which the lattice is fully covered with loops that are randomly flipped with 50% of probability.
+
+This project is build upon the latter.
+
 
 Purpose
 ------------
