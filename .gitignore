@@ -1,7 +1,7 @@
-# Elenco delle estensioni dei file che Git deve ignorare in ogni sen-
-# so: non deve mostrare nei file "untracked" e non li deve aggiungere.
-#
-# Ignoro i file di dati
+# A list of file extensions I want Git to ignore at all: they should
+# not be added or shown as "untracked".
+
+# Run-generated data files
 *.dat
-# Ignoro i file di backup
+# Backup files
 *~
