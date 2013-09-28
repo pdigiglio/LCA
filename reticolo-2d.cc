@@ -8,9 +8,7 @@
  * ------------------------------------------------------------------
  *       Class: Reticolo
  *      Method: Reticolo
- * Description: [ctor] Costruisco il reticolo di spin. Tutti gli as-
- * 				segnamenti sono dichiarati nel file .h, quindi la fun-
- * 				zione è vuota.
+ * Description: [ctor] Costruisco il reticolo di spin.
  * ------------------------------------------------------------------
  */
 Reticolo::Reticolo ( void ) {
@@ -523,7 +521,7 @@ Reticolo::forced_continuation ( void ) {
 	 * se '0 <= i < 2' fa zero; se '2 <= i < 4' fa due.
 	 */
 	unsigned short int i0 = 2 * ( i_x / 2 );
-	/* assegno le transizioni ai siti */
+	/* assegno la transizione al sito non (ancora) visitato */
 	for ( unsigned short int i = 0; i < 2; i ++ ) {
 		/* registro che il sito è stato controllato */
 		( * Reticolo::pv( i0 + i ) ).ckd = lckd;

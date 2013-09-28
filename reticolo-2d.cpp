@@ -53,8 +53,7 @@ main ( void ) {
 		if ( i == pct ) {
 			/* stampo la percentuale */
 			fprintf( stderr, "Sweep n. %u of %u. Completed %u %%\r", i, MSR, k );
-			/* pulisco lo stream */
-			fflush( stderr );
+
 			/* aggiorno le variabili di controllo */
 			pct = ++ k * ( MSR / 100 );
 		}
@@ -77,6 +76,9 @@ main ( void ) {
 		msr[1][1] += pow( (double) N * M * T / reticolo.get_lps(), 2 );
 		msr[2][1] += pow( (double) reticolo.get_time_decay() / ( N * M * T ), 2 );
 	}
+
+	/* copro la percentuale di completamento */
+	fprintf(stderr, "                                            \r");
 
 	/* chiudo il file output per le misure */
 	if( fclose(oFile) == EOF ) {
