@@ -3,5 +3,14 @@
 
 # Run-generated data files
 *.dat
+
 # Backup files
 *~
+
+# ROOT macros: I'll provide C++ source version
+*.C
+
+# specific binary names
+fit
+analisi
+cut
