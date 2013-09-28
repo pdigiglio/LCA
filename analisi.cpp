@@ -31,6 +31,9 @@
 #include <errno.h>
 #include <string.h>
 
+/* misure da saltare perché il sistema non si è ancora termalizzato */
+#define	SKIP 50
+
 int
 main ( int argc, char *argv[] ) {
 	/* ordine della suddivisione */
@@ -70,6 +73,14 @@ main ( int argc, char *argv[] ) {
 	double mean[3] = { (double) 0, (double) 0, (double) 0 };
 	double err[3] =  { (double) 0, (double) 0, (double) 0 };
 
+	/* 
+	 * faccio scorrere delle letture a vuoto per saltare la registra-
+	 * zione delle prime 'SKIP' misure
+	 */
+	#pragma omp parallel for
+	for ( unsigned short int z = 0; z < SKIP; z ++ )
+		fscanf( pFile, "%lf, %lf, %lf\n", &temp, &temp, &temp );
+
 	/* acquisisco i valori e calcolo la media */
 	unsigned int l, i;
 	for ( l = 0; !( feof(pFile) ); l ++ ) {	
@@ -105,11 +116,11 @@ main ( int argc, char *argv[] ) {
 			f[l][2] += temp;
 		}
 		
+//		printf( "%u\t", l );
 		/* normalizzo i cluster ed aggiorno le medie */
 		for ( unsigned short int j = 0; j < 3; j ++ ) {
 			f[l][j] = (double) f[l][j] / i;
-//			printf("%lf\t", f[l][j]);
-//			printf("%u\t%lf\n", ord * l, f[l]);
+//			printf("%G\t", f[l][j]);
 			mean[j] += f[l][j];
 			err[j] += pow( f[l][j], (double) 2);
 		}
@@ -134,7 +145,7 @@ main ( int argc, char *argv[] ) {
 		err[j] = (double) sqrt( err[j] - pow( mean[j], (double) 2) );
 
 		/* stampo a schermo varianza e sdom */
-		printf( "%lg\t%lg\t", err[j], err[j] / sqrt(l) );
+		printf( "%g\t%g\t", err[j], err[j] / sqrt(l) );
 	}
 	printf("\n");
 
@@ -155,10 +166,10 @@ main ( int argc, char *argv[] ) {
 
 	/* calcolo gli autocorrelatori */
 	for ( unsigned short int t = 0; t < 30; t ++ ) {
-			/* stampo la coordinata temporale */
-			fprintf( oFile, "%hu\t", t );
-			
-			for ( unsigned short int j = 0; j < 3; j ++ ) {
+		/* stampo la coordinata temporale */
+		fprintf( oFile, "%hu\t", t );
+		
+		for ( unsigned short int j = 0; j < 3; j ++ ) {
 			/* variabile temporanea */
 			temp = (double) 0;
 			/* riutilizzo la variabile per l'errore */
@@ -180,7 +191,7 @@ main ( int argc, char *argv[] ) {
 				norm[j] = temp - pow(mean[j], 2);
 			
 			/* stampo i valori normalizzati */
-			fprintf( oFile, "%lg\t%lg\t", (double) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
+			fprintf( oFile, "%g\t%g\t", (double) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
 		}
 		fprintf( oFile, "\n");
 	}

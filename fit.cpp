@@ -79,26 +79,26 @@ main ( int argc, char *argv[] ) {
 		/* 
 		 * l'andamento esponenziale vale approssimativamente per un
 		 * dominio abbastanza ristretto, quindi definisco la funzione
-		 * solo da 0 a 15 (che darà già un chi quadro molto basso)
+		 * solo da 0 a 10 (che darà già un chi quadro molto basso)
 		 */
-		fit[i] = new TF1("f1", "[1] + [2] * exp( - x / [0])", 0, 15);
+		fit[i] = new TF1("f1", "exp( - x / [0])", 0, 10);
 		/* il tempo di autocorrelazione è dell'ordine di due */
 		(*fit[i]).SetParameter(0, 2);
 		/* la traslazione verticale dovrebbe essere nulla */
-		(*fit[i]).SetParameter(1, 0);
+//		(*fit[i]).SetParameter(1, 0);
 		/* il coefficiente di dilatazione dovrebbe essere uno */
-		(*fit[i]).SetParameter(2, 1);
+//		(*fit[i]).SetParameter(2, 1);
 
 		/* imposto il nome della costante 'p[0]' */
 		(*fit[i]).SetParName(0, "Decay time");
 		/* imposto il nome della costante 'p[0]' */
-		(*fit[i]).SetParName(1, "Traslation");
+//		(*fit[i]).SetParName(1, "Traslation");
 		/* imposto il nome della costante 'p[0]' */
-		(*fit[i]).SetParName(2, "Dilatation");
+//		(*fit[i]).SetParName(2, "Dilatation");
 
 		/* colore linea: 2 = rosso */
 		(*fit[i]).SetLineColor(2);
-		/* interpolo: "Q" sta per "quiet" */
+		/* interpolo da 0 a 10: "Q" sta per "quiet" */
 		(*gr[i]).Fit("f1", "Q", "", 0, 10);
 		
 		/*

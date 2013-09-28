@@ -44,7 +44,8 @@ function vs_plot {
 			# creo un file con l'autocorrelatore troncato a 10
 			head --lines=11 ac_${k}.bak.dat > ac_${k}.dat
 			# interpolo i grafici degli autocorrelatori
-			echo ${J} ${B} ${N} ${M} `./fit ac_${k}.dat` >> ac_times.dat
+			echo -e "#ord\tJ\tB\tN\tM\t##parametri fit" >> ac_times.dat
+			echo  -e "${k}\t${J}\t${B}\t${N}\t${M}\t`./fit ac_${k}.dat`" >> ac_times.dat
 			
 			# rinomino i file creati dall'interpolazione
 			for ext in svg pdf
@@ -65,6 +66,9 @@ function vs_plot {
 			mv --verbose --update ms_cluster.dat ms_cluster_${k}.dat
 		fi
 	done
+	
+	# Salvo i tempi di auto-correlazione
+	head --lines=2 ${DIR}ac_times.dat >> tempi_auto-corr.dat
 	
 	# aggiungo le informazioni nei file
 	echo "# B = ${B}; N = ${N}; M = ${M} sweep ${SWEEP}" >> ${OUT}
@@ -130,10 +134,11 @@ function main {
 	#
 	#################################################################
 
+	cp -av ${DIR}${MAIN} .
 	# Creo il file header con i parametri inseriti qui
-	create_global
+# 	create_global
 	# Compilo il programma e lo eseguo
-	make -j3 && ./reticolo_2d >> risultati.dat
+# 	make -j3 && ./reticolo_2d >> risultati.dat
 
 	#################################################################
 	#
@@ -143,7 +148,7 @@ function main {
 
 	vs_plot 30
 	gnuplot make_plot.plt
-	move
+ 	move
 
 	# ritorna il valore d'uscita dell'ultimo comando
 #	exit $?
@@ -158,12 +163,12 @@ B=1
 J=1
 N=32
 M=256
-SWEEP=1500000
+SWEEP=2000000
 
 # "radice" del percorso in cui spostare i file
 root="/home/paolo/Pubblici/Dropbox/tesi/data/2d/"
 # file da cui estrarre i dati
-MAIN="./data.dat"
+MAIN="data.dat"
 
 # dichiaro il nome del file di output
 OUT="var_sdom.dat"
@@ -171,42 +176,42 @@ OUT="var_sdom.dat"
 
 
 # Per N = 32 siti
-# for (( m = 1; m < 10; m ++))
-# do
-# 	let M=$[$m*32]
-# 	# percorso in cui spostare i file
-# 	DIR=${root}"B${B}.N${N}.M${M}"
-# 	main
-# 	echo ${DIR}
-# done
+for (( m = 1; m < 10; m ++))
+do
+	let M=$[$m*32]
+	# percorso in cui spostare i file
+	DIR=${root}"B${B}.N${N}.M${M}/"
+	main
+	echo ${DIR}
+done
 
 # Per N = 128 siti
 let N=128
 
 #####################################################################
-# let B=2
-# let M=16
-# # percorso in cui spostare i file
-# DIR="/home/paolo/Pubblici/Dropbox/tesi/data/2d/B${B}.N${N}.M${M}"
-# main
-# #####################################################################
-# let B=4
-# let M=32
-# # percorso in cui spostare i file
-# DIR="/home/paolo/Pubblici/Dropbox/tesi/data/2d/B${B}.N${N}.M${M}"
-# main
-# #####################################################################
-# let B=8
-# let M=64
-# # percorso in cui spostare i file
-# DIR="/home/paolo/Pubblici/Dropbox/tesi/data/2d/B${B}.N${N}.M${M}"
-# main
+let B=2
+let M=16
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
+#####################################################################
+let B=4
+let M=32
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
+#####################################################################
+let B=8
+let M=64
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
 #####################################################################
 let B=16
 for m in 16 32 64 128
 do
 	let M=$m
 	# percorso in cui spostare i file
-	DIR=${root}"B${B}.N${N}.M${M}"
+	DIR=${root}"B${B}.N${N}.M${M}/"
 	main
 done

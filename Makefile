@@ -1,5 +1,5 @@
 # File da compilare
-MAIN = reticolo_2d 
+MAIN = reticolo-1d 
 INCLUDE = global.h
 
 # Librerie aggiuntive che prevedo di inserire
@@ -23,7 +23,11 @@ $(MAIN): %: %.cpp %.cc %.h Makefile ${INCLUDE}
 	@ echo -e 'Architettura selezionata:\t' $(MARCH)
 	@ echo
 	$(CXX) $< -o $@ $(CXXFLAGS)
-	
+	#
+# compilo il programma per interpolare i grafici
+fit: fit.cpp
+	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
+
 # pulisce la directory
 clean:
 	@ -rm -rf *.d *.o *.tmp $(MAIN)

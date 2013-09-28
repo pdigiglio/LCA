@@ -19,7 +19,7 @@
  * ==================================================================
  */
 
-#include "./reticolo_2d.cc"
+#include "./reticolo-1d.cc"
 #include <ctime>
 #include <errno.h>
 #include <string.h>
@@ -31,8 +31,6 @@ main ( void ) {
 
 	/* dichiaro un reticolo */
 	Reticolo reticolo;
-
-//	reticolo.print();
 
 	FILE *oFile = NULL;
 	/* apro un file per la scrittura */
@@ -95,7 +93,6 @@ main ( void ) {
 	}
 
 
-//	reticolo.print();
 	reticolo.mean();
 	reticolo.print_results();
 

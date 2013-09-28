@@ -1,4 +1,4 @@
-#include "./reticolo_2d.h"
+#include "./reticolo-1d.h"
 
 #include <cmath>
 /* per l'operatore bitwise XOR (^) */
@@ -199,8 +199,8 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 
 	/* magnetizzazione uniforme */
 	float cu = (float) 0;
-	/* magnetizzazione alternata */
-	unsigned int cs = 0;
+	/* magnetizzazione alternata, variabile ausiliaria */
+	unsigned int cs[M] = {};
 
 	/* faccio evolvere il loop finche' non torno al p.to di partenza */
 	do {
@@ -215,7 +215,7 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 			cu += Reticolo::spin( x[0], x[1] ) - (float) 1/2;
 
 		/* calcolo la magnetizzazione alternata */
-		cs ++;
+		cs[ x[1] ] ++;
 		/* faccio evolvere le coordinate 'x[]' e misuro l'energia */
 		msr.val[2] += Reticolo::next_ene( x[0], x[1] );
 	} while ( x[0] != n || x[1] != m );
@@ -224,7 +224,8 @@ Reticolo::loop (unsigned int n, unsigned int m) {
 	if ( cu /* != 0 */ )
 		msr.val[0] += (float) pow(cu, 2);
 	
-	msr.val[1] += (float) pow( cs, 2 );
+	for ( unsigned short int t = 0; t < M; t ++ )
+		msr.val[1] += (float) pow( cs[t], 2 );
 } /* -----  end of method Reticolo::loop  ----- */
 
 /*
@@ -629,9 +630,10 @@ Reticolo::print_results (void) {
 	msr.sdom[0] = (double) B * msr.sdom[0]/((double) N );
 
 	/* suscettività alternata */
-	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M * M );
-	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M * M );
+	msr.mean[1] = (double) B * msr.mean[1]/((double) 4 * N * M );
+	msr.sdom[1] = (double) B * msr.sdom[1]/((double) 4 * N * M );
 
+	/* densità di energia */
 	msr.mean[2] = ((double) J / (4 * M * N)) * msr.mean[2];
 	msr.sdom[2] = ((double) J / (4 * M * N)) * msr.sdom[2];
 
