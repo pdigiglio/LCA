@@ -107,6 +107,7 @@ function move {
 
 # crea il file "./global.h" con i parametri definiti qui
 function create_global {
+	clear
 	echo "# Creo nuovo header!"
 	echo "# PARAMETRI: B ${B} J ${J} N ${N} M ${M}"
 
@@ -154,6 +155,9 @@ function main {
 #	exit $?
 }
 
+prova () {
+	echo prova
+}
 #####################################################################
 #
 # PARAMETRI DEL SISTEMA
@@ -163,10 +167,10 @@ B=1
 J=1
 N=32
 M=256
-SWEEP=2000000
+SWEEP=2000
 
 # "radice" del percorso in cui spostare i file
-root="/home/paolo/Pubblici/Dropbox/tesi/data/2d/"
+root="/home/paolo/"
 # file da cui estrarre i dati
 MAIN="data.dat"
 
@@ -176,42 +180,42 @@ OUT="var_sdom.dat"
 
 
 # Per N = 32 siti
-for (( m = 1; m < 10; m ++))
-do
-	let M=$[$m*32]
-	# percorso in cui spostare i file
-	DIR=${root}"B${B}.N${N}.M${M}/"
-	main
-	echo ${DIR}
-done
+# for (( m = 1; m < 10; m ++))
+# do
+# 	let M=$[$m*32]
+# 	# percorso in cui spostare i file
+# 	DIR=${root}"B${B}.N${N}.M${M}/"
+# 	main
+# 	echo ${DIR}
+# done
+# 
+# # Per N = 128 siti
+# let N=128
 
-# Per N = 128 siti
-let N=128
-
-#####################################################################
-let B=2
-let M=16
-# percorso in cui spostare i file
-DIR=${root}"B${B}.N${N}.M${M}/"
-main
-#####################################################################
-let B=4
-let M=32
-# percorso in cui spostare i file
-DIR=${root}"B${B}.N${N}.M${M}/"
-main
-#####################################################################
-let B=8
-let M=64
-# percorso in cui spostare i file
-DIR=${root}"B${B}.N${N}.M${M}/"
-main
-#####################################################################
-let B=16
-for m in 16 32 64 128
-do
-	let M=$m
-	# percorso in cui spostare i file
-	DIR=${root}"B${B}.N${N}.M${M}/"
-	main
-done
+# #####################################################################
+# let B=2
+# let M=16
+# # percorso in cui spostare i file
+# DIR=${root}"B${B}.N${N}.M${M}/"
+# main
+# #####################################################################
+# let B=4
+# let M=32
+# # percorso in cui spostare i file
+# DIR=${root}"B${B}.N${N}.M${M}/"
+# main
+# #####################################################################
+# let B=8
+# let M=64
+# # percorso in cui spostare i file
+# DIR=${root}"B${B}.N${N}.M${M}/"
+# main
+# #####################################################################
+# let B=16
+# for m in 16 32 64 128
+# do
+# 	let M=$m
+# 	# percorso in cui spostare i file
+# 	DIR=${root}"B${B}.N${N}.M${M}/"
+# 	main
+# done
