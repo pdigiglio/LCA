@@ -3,9 +3,6 @@ MAIN = reticolo-1d
 # header to include
 INCLUDE = global.h
 
-# File names are the same as containing directory names
-SRC = ./$(MAIN)/$(MAIN)
-
 # C++ compiler
 CXX = g++
 
@@ -20,14 +17,13 @@ STD = gnu++11
 CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) \
 		   -masm=$(MASM) -mtune=$(MARCH) -fopenmp -lm
 
-
-$(SRC): %: %.cpp %.cc %.h Makefile ./$(MAIN)/$(INCLUDE)
+# main function (to compile main source)
+$(MAIN): %: %.cpp %.cc %.h Makefile $(INCLUDE)
 	@ echo '#INFO'
 	@ echo 'Architettura rilevata:\t\t' ` gcc -march=native -Q --help=target | grep --text march | cut -f3 `
 	@ echo -e 'Architettura selezionata:\t' $(MARCH)
 	@ echo
-	echo $(SRC)
-#	$(CXX) $< -o $@ $(CXXFLAGS)
+	$(CXX) $< -o $@ $(CXXFLAGS)
 	@ echo
 
 # compilo il programma per interpolare i grafici
