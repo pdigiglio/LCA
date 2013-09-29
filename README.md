@@ -17,5 +17,12 @@ in which the lattice is fully covered with loops that are randomly flipped with 
 
 This project is build upon the latter.
 
+File description
+-------------------
+
+There are two main source sub-directory which contains the code for generating datas (measures).
+Each sub-directory shold contain its own README.md descriptor file.
+
+
 [4]: http://arxiv.org/abs/hep-lat/9204015v1 "Blockspin Cluster Algorithms for Quantum Spin Systems"
 [5]: http://dspace.mit.edu/handle/1721.1/38414#files-area "Improvements in Cluster Algorithms for Quantum Spin Systems"
