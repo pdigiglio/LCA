@@ -105,28 +105,6 @@ function move {
 	done
 }
 
-# crea il file "./global.h" con i parametri definiti qui
-function create_global {
-	clear
-	echo "# Creo nuovo header!"
-	echo "# PARAMETRI: B ${B} J ${J} N ${N} M ${M}"
-
-	# creo l'header
-	echo "/* File header contenente i parametri del sistema */
-
-#ifndef  global_H
-#define  global_H
-
-#define N ${N}	/* numero atomi */
-#define M ${M}	/* 2 * numero di Trotter */
-
-#define J ${J}
-#define B ${B}
-
-#define MSR ${SWEEP}
-
-#endif   /* ----- #ifndef global_H  ----- */" > ./global.h
-}
 
 function main {
 	#################################################################
