@@ -5,6 +5,8 @@ INCLUDE = global.h
 
 # Since main files to be compiled names are the same as their containing
 # relative path names, I'll edit them as
+#
+# TODO find a better solution!
 SRC = ./$(MAIN)/$(MAIN)
 
 # C++ compiler
