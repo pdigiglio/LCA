@@ -32,7 +32,7 @@ function vs_plot {
 	for (( k = 1; k <= ${1}; k ++ ))
 	do
 		echo "Creazione del file '${OUT}': riga ${k} / ${1}"
-		./analisi ${MAIN} ${k} >> var_sdom.dat
+		./analisi ${MAIN} ${k} >> ${OUT}
 		
 		# controllo se il programma ha creato il grafico
 		# dell'autocorrelatore
@@ -43,7 +43,14 @@ function vs_plot {
 			mv --verbose --update ac.dat ac_${k}.bak.dat
 			# creo un file con l'autocorrelatore troncato a 10
 			head --lines=11 ac_${k}.bak.dat > ac_${k}.dat
+
 			# interpolo i grafici degli autocorrelatori
+			#
+			# controllo di essere in una o due dimensioni
+			if ${T} ; then
+				echo ${T} is set
+			fi
+
 			echo -e "#ord\tJ\tB\tN\tM\t##parametri fit" >> ac_times.dat
 			echo  -e "${k}\t${J}\t${B}\t${N}\t${M}\t`./fit ac_${k}.dat`" >> ac_times.dat
 			
@@ -68,7 +75,7 @@ function vs_plot {
 	done
 	
 	# Salvo i tempi di auto-correlazione
-	head --lines=2 ${DIR}ac_times.dat >> tempi_auto-corr.dat
+	head --lines=2 ${DIR}ac_times.dat >> ../tempi_auto-corr.dat
 	
 	# aggiungo le informazioni nei file
 	echo "# B = ${B}; N = ${N}; M = ${M} sweep ${SWEEP}" >> ${OUT}
@@ -113,11 +120,27 @@ function main {
 	#
 	#################################################################
 
-	cp -av ${DIR}${MAIN} .
+	# creo una directory di lavoro temporanea e mi ci sposto
+	mkdir --parents --verbose ./temp
+	# copio i binari per l'analisi dei dati nella cartella temporanea
+	cp --update --verbose --archive ../{analisi,fit,make_plot.plt} \
+		--target-directory=./temp
+
+	# mi sposto nella cartella temporanea
+	cd temp
+	echo -e "\n > Mi sposto in '`pwd`'\n"
+
+	# copio il file di dati (dev'essere stato generato)
+	cp --archive --verbose --update ${DIR}${MAIN} .
+
+	################################################################
+	# XXX Da aggiornare! sicuramente non funziona!
+	#
 	# Creo il file header con i parametri inseriti qui
 # 	create_global
 	# Compilo il programma e lo eseguo
 # 	make -j3 && ./reticolo_2d >> risultati.dat
+	################################################################
 
 	#################################################################
 	#
@@ -129,13 +152,10 @@ function main {
 	gnuplot make_plot.plt
  	move
 
-	# ritorna il valore d'uscita dell'ultimo comando
-#	exit $?
+	# elimino la cartella temporanea
+	cd .. && rm --recursive --verbose --force ./temp
 }
 
-prova () {
-	echo prova
-}
 #####################################################################
 #
 # PARAMETRI DEL SISTEMA
@@ -153,7 +173,7 @@ root="/home/paolo/"
 MAIN="data.dat"
 
 # dichiaro il nome del file di output
-OUT="var_sdom.dat"
+OUT="./var_sdom.dat"
 #####################################################################
 
 

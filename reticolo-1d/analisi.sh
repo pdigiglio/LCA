@@ -56,10 +56,12 @@ B=1
 J=1
 N=32
 M=256
+# In the mono-dimensional case, '${T} == 0'
+T=0
 SWEEP=2000
 
 # "root" of the path to move file in
-root="/home/paolo/"
+root="/home/paolo/Pubblici/Dropbox/tesi/data/2d/"
 # data file
 MAIN="data.dat"
 
@@ -67,4 +69,7 @@ MAIN="data.dat"
 OUT="var_sdom.dat"
 #####################################################################
 
-prova
+# path to take data file from
+DIR=${root}"B${B}.N${N}.M${M}/"
+
+main
