@@ -46,6 +46,6 @@ fit_risultati: fit_risultati.cpp
 	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
 
 # pulisce la directory
-clean:
-	@ -rm -rf *.d *.o *.tmp $(MAIN)
-.PHONY: clean
+#clean:
+#	@ rm --recursive --verbose $(MAIN).a
+#.PHONY: clean
