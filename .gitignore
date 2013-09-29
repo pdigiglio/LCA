@@ -7,6 +7,12 @@
 # Backup files
 *~
 
+# Documents
+*.pdf
+
+# Images
+*.jpeg
+
 # ROOT macros: I'll provide C++ source version
 *.C
 
