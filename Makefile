@@ -1,5 +1,5 @@
 # Main file to compile
-MAIN = reticolo-1d
+MAIN = reticolo-2d
 # header to include
 INCLUDE = global.h
 

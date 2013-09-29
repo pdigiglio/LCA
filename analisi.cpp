@@ -176,6 +176,7 @@ main ( int argc, char *argv[] ) {
 			err[j] = (double) 0;
 
 			/* aggiorno il j-esimo autocorrelatore e il suo errore */
+			#pragma omp parallel for
 			for ( unsigned int s = 0; s < (unsigned) l - t; s ++ ) {
 				temp += f[s][j] * f[s + t][j];
 				err[j] += pow( f[s][j] * f[s + t][j], 2 );

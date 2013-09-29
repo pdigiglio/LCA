@@ -10,7 +10,11 @@
 # ROOT macros: I'll provide C++ source version
 *.C
 
+# Binaries
+*.a
 # specific binary names
 fit
 analisi
 cut
+reticolo-1d/reticolo-1d
+reticolo-2d/reticolo-2d
