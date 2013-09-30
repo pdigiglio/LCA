@@ -34,6 +34,47 @@
 /* misure da saltare perché il sistema non si è ancora termalizzato */
 #define	SKIP 50
 
+/* 
+ * ===  FUNCTION  ===================================================
+ *         Name: round
+ *  Description: Arrotonda e stampa medie e sdom arrotondate alle ci-
+ *  			fre decimali significative.
+ * ==================================================================
+ */
+void
+round ( double *val, double *err, unsigned int l ) {
+	/* variabile per l'esponente */
+	signed short int exp = 0;
+	/* variabili temporanee per la SDOM e valore*/
+	double tmp = (double) 0;
+
+	/* stampo informazioni generiche */
+//	printf( "# Sweep: %u\n", l );
+	for ( unsigned short int i = 0; i < 3; i ++ ) {
+		/* assegno la variabile temporanea */
+		tmp = (double) err[i] / sqrt(l);
+		/* assegno l'esponente */
+		exp = (short) log10( fabs( tmp ) );
+
+		/* controllo che l'approssimazione sia corretta */
+		while ( !( tmp / pow( 10, exp ) >= 1 && tmp / pow( 10, exp ) < 10 ) ) {
+			if ( tmp / pow( 10, exp ) <= 1 ) exp --;
+			else exp ++;
+		}
+
+		/* controllo le cifre decimali da tenere */
+		if ( tmp / pow( 10, exp ) < 3 )
+			exp --;
+
+		printf( "%f\t%f\t",
+				floorf( val[i] / pow(10., exp) + 0.5) * pow(10., exp),
+				floorf( tmp / pow(10., exp) + 0.5) * pow(10., exp)
+			);
+	}
+	/* vado a capo */
+	printf( "\n" );
+}
+
 int
 main ( int argc, char *argv[] ) {
 	/* ordine della suddivisione */
@@ -41,7 +82,7 @@ main ( int argc, char *argv[] ) {
 	
 	/* controllo che argomenti da linea di comando */ 
 	if ( argc == 3 )
-		ord = atoi( argv[argc - 1] );
+		ord = atoi( argv[2] );
 	else if ( argc == 2 )
 		fprintf( stderr, " > Variabile 'ord' impostata di default a %hu\n", ord );
 	else { /* se sono sbagliati */
@@ -50,6 +91,7 @@ main ( int argc, char *argv[] ) {
 		else if ( argc < 2 )
 			fprintf( stderr, " > Manca il nome del file!\n");
 
+		fprintf( stderr, "[uso] ./analisi {nome file} {dim. bin}\n");
 		/* esco dal programma */
 		exit(EXIT_FAILURE);
 	}
@@ -69,15 +111,13 @@ main ( int argc, char *argv[] ) {
 	double **f = NULL;
 	double temp;
 
-	/* media ed errore */
-	double mean[3] = { (double) 0, (double) 0, (double) 0 };
-	double err[3] =  { (double) 0, (double) 0, (double) 0 };
+	/* media ed errore (inizializzate a zero) */
+	double mean[3] = {}, err[3] =  {};
 
 	/* 
 	 * faccio scorrere delle letture a vuoto per saltare la registra-
 	 * zione delle prime 'SKIP' misure
 	 */
-	#pragma omp parallel for
 	for ( unsigned short int z = 0; z < SKIP; z ++ )
 		fscanf( pFile, "%lf, %lf, %lf\n", &temp, &temp, &temp );
 
@@ -134,8 +174,26 @@ main ( int argc, char *argv[] ) {
 		exit (EXIT_FAILURE);
 	}
 
-	/* stampo ordine, varianza e SDM correttamente normalizzate */
-	printf("%u\t", ord);
+	/* per saltare tutto quello che viene dopo */
+//	exit( EXIT_SUCCESS );
+
+	/* 
+	 * puntatore al file contenente il grafico degli errori in funzione
+	 * della dimensione dei bin in cui vengono suddivise le misure
+	 */
+//	char vs_file_name[] = "./var_sdom.dat";
+//	FILE *vs = fopen( vs_file_name, "a" );
+//	if ( vs == NULL ) {
+//		fprintf ( stderr, "Impossibile aprire il file '%s'; %s\n",
+//				vs_file_name, strerror(errno) );
+//		exit (EXIT_FAILURE);
+//	}
+
+	/* Stampo:
+	 *  > a schermo: le medie;
+	 *  > nel file: ordine, varianza e SDM correttamente normalizzate.
+	 */
+	fprintf( stdout, "%u\t", ord);
 	for ( unsigned short int j = 0; j < 3; j ++ ) {
 		/* normalizzo la media */
 		mean[j] = (double) mean[j] / l;
@@ -144,10 +202,19 @@ main ( int argc, char *argv[] ) {
 		err[j] = err[j] / l;
 		err[j] = (double) sqrt( err[j] - pow( mean[j], (double) 2) );
 
-		/* stampo a schermo varianza e sdom */
-		printf( "%g\t%g\t", err[j], err[j] / sqrt(l) );
+		/* stampo nel file varianza e sdom */
+		fprintf( stdout, "%f\t%f\t", err[j], err[j] / sqrt(l) );
 	}
-	printf("\n");
+	/* stampo medie ed errori arrotondati */
+	round( mean, err, l );
+//	fprintf( stdout, "\n");
+	
+	/* chiudo il file di output */
+//	if( fclose(vs) == EOF ) {
+//		fprintf ( stderr, "Impossibile chiudere il file '%s'; %s\n",
+//				vs_file_name, strerror(errno) );
+//		exit (EXIT_FAILURE);
+//	}
 
 	/*-----------------------------------------------------------------------------
 	 *  AUTOCORRELATORI
@@ -175,8 +242,10 @@ main ( int argc, char *argv[] ) {
 			/* riutilizzo la variabile per l'errore */
 			err[j] = (double) 0;
 
-			/* aggiorno il j-esimo autocorrelatore e il suo errore */
-			#pragma omp parallel for
+			/*
+			 * aggiorno il j-esimo autocorrelatore e il suo errore
+			 * XXX Non parallelizzare!
+			 */
 			for ( unsigned int s = 0; s < (unsigned) l - t; s ++ ) {
 				temp += f[s][j] * f[s + t][j];
 				err[j] += pow( f[s][j] * f[s + t][j], 2 );
