@@ -24,8 +24,9 @@ There are two main source sub-directory which contains the code for generating d
 Each sub-directory should contain its own README.md descriptor file.
 
 A lot of extra tools are provided in this directory to easily manage and analyze data:
-* *gcccpuopt.sh* is a shell script taken from [][] to detect cpu-based gcc flags you may want to activate;
+* *gcccpuopt.sh* is a shell script taken from [here][6] to detect cpu-based gcc flags you may want to activate;
 * *analisi_common.sh* contains some useful function used in *./reticolo{1,2}-d/analisi.sh*.
 
 [4]: http://arxiv.org/abs/hep-lat/9204015v1 "Blockspin Cluster Algorithms for Quantum Spin Systems"
 [5]: http://dspace.mit.edu/handle/1721.1/38414#files-area "Improvements in Cluster Algorithms for Quantum Spin Systems"
+[6]: https://github.com/pixelb/scripts/commits/master/scripts/gcccpuopt "Pádraig Brady"
