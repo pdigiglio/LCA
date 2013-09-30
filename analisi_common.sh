@@ -53,7 +53,7 @@ function main {
 	cp --archive --verbose --update ${DIR}${MAIN} .
 
 	################################################################
-	# XXX Da aggiornare! sicuramente non funziona!
+	# XXX Da aggiornare! sicuramente non funziona! 
 	#
 	# Creo il file header con i parametri inseriti qui
 # 	create_global
