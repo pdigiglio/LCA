@@ -38,7 +38,7 @@
  * ===  FUNCTION  ===================================================
  *         Name: round
  *  Description: Arrotonda e stampa medie e sdom arrotondate alle ci-
- *  			fre decimali significative.
+ *  			 fre decimali significative.
  * ==================================================================
  */
 void
@@ -115,8 +115,8 @@ main ( int argc, char *argv[] ) {
 	double mean[3] = {}, err[3] =  {};
 
 	/* 
-	 * faccio scorrere delle letture a vuoto per saltare la registra-
-	 * zione delle prime 'SKIP' misure
+	 * XXX faccio scorrere delle letture a vuoto per saltare la regis-
+	 * trazione delle prime 'SKIP' misure
 	 */
 	for ( unsigned short int z = 0; z < SKIP; z ++ )
 		fscanf( pFile, "%lf, %lf, %lf\n", &temp, &temp, &temp );
