@@ -50,6 +50,7 @@ To compile it you need to use the following syntax (i.e. to link ROOT library in
 You will also need the ROOT suite installed on your locale to have the compile process work.
 
 
+[3]: http://root.cern.ch/drupal/ "Go to ROOT homepage"
 [4]: http://arxiv.org/abs/hep-lat/9204015v1 "Blockspin Cluster Algorithms for Quantum Spin Systems"
 [5]: http://dspace.mit.edu/handle/1721.1/38414#files-area "Improvements in Cluster Algorithms for Quantum Spin Systems"
 [6]: https://github.com/pixelb/scripts/commits/master/scripts/gcccpuopt "Pádraig Brady"

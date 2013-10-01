@@ -11,4 +11,9 @@ All the functions are nearly the same as in mono-dimensional implementation exce
 Indeed, spin chain simulation has been written in such a way to allow bi-dimensional lattice generalization quite as simply as possible.
 -->
 
-[1]: https://github.com/pdigiglio/reticolo-1d/tree/master/reticolo-1d "Mono-dimensional version of this project"
+There are also two extra files:
+* __fit_risultati.cpp__ for fitting lattice observables;
+* __make_res_plot.plt__ a [GNUplot] [2] script to plot observables data file called _risultati.dat_;
+
+[1]: https://github.com/pdigiglio/LCA/tree/master/reticolo-1d "Mono-dimensional version of this project"
+[2]: http://www.gnuplot.info/ "Go to gnuplot homepage"
