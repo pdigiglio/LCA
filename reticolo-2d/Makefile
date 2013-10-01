@@ -1,5 +1,5 @@
 # Main file to compile
-MAIN = reticolo-1d
+MAIN = reticolo-2d
 # header to include
 INCLUDE = global.h
 
@@ -26,7 +26,11 @@ $(MAIN): %: %.cpp %.cc %.h Makefile $(INCLUDE)
 	$(CXX) $< -o $@ $(CXXFLAGS)
 	@ echo
 
+# results fit routine (requires ROOT)
+fit_risultati: fit_risultati.cpp
+	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
+
 # remove $(MAIN) binary file
 clean:
-	@ rm --recursive --verbose $(MAIN)
+	@ rm --recursive --verbose $(MAIN) fit_risultati
 .PHONY: clean

@@ -20,10 +20,6 @@ analisi: analisi.cpp
 fit: fit.cpp
 	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
 
-# results fit routine (requires ROOT)
-fit_risultati: fit_risultati.cpp
-	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
-
 # clean directory
 clean:
 	@ rm --recursive --verbose fit analisi
