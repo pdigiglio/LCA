@@ -16,14 +16,17 @@ reticolo-2d/temp/
 
 # Images
 *.jpeg
+*.svg
 
 # ROOT macros: I'll provide C++ source version
 *.C
 
 # Binaries
 *.a
+*.o
+
 # specific binary names
-fit
+fit_*
 analisi
 cut
 reticolo-1d/reticolo-1d
