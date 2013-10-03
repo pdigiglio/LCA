@@ -23,33 +23,7 @@
 #include <stdlib.h>
 
 /* funzioni matematiche per l'interpolazione */
-#include "./functions.cc"
-
-/* funzione per interpolare la scuscettività uniforme */
-Double_t cu ( Double_t *x, Double_t *par ) {
-	/* variabile ausiliaria: par[0] = $\hbar c$ */
-	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
-
-	/* parte tra parentesi */
-	Double_t tmp = t_beta( l, 2 );
-	tmp -= TMath::Power( t_beta( l, 1. ), 2. ) / 3.;
-	tmp -= 6. * psi( l );
-	/* moltiplico per il coefficiente davanti: par[1] = $\rho_s$ */
-	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2 ); 
-
-	/* primo termine in beta */
-	tmp += t_beta ( l, 1. ) * l * l / ( B * par[1] );
-	/* divido per tre */
-	tmp = tmp / 3.;
-	/* aggiungo uno */
-	++ tmp;
-
-	/* moltiplico per il primo coefficiente */
-	tmp = tmp * 2. * par[1] / ( 3. * par[0] * par[0] );
-
-	/* restituisco il valore della funzione */
-	return tmp;
-}
+#include "./fit_functions.cc"
 
 /* funzione per interpolare la suscettività aòternata */
 Double_t cs ( Double_t *x, Double_t *par ) {
@@ -73,7 +47,7 @@ Double_t cs ( Double_t *x, Double_t *par ) {
 int
 main ( int argc, char *argv[] ) {
 	/* valore di default dei dati in input */
-	TString input = "./en.dat";
+	TString input = "./cs.dat";
 
 	/* controllo che gli argomenti siano corretti */
 	if ( argc == 2 )
@@ -99,7 +73,7 @@ main ( int argc, char *argv[] ) {
 	/* 9 = blu */
 	(*data).SetMarkerColor( 9 );
 	/* titolo del grafico */
-	(*data).SetTitle( "Uniform Susceptivity" );
+	(*data).SetTitle( "Staggered Susceptivity" );
 	(*data).SetMarkerStyle( 20 );
 	(*data).SetMarkerSize( 0.5 );
 	/* imposto i titoli degli assi */
@@ -115,6 +89,7 @@ main ( int argc, char *argv[] ) {
 	/* valore di $\rho_s$ */
 	(*plot).SetParameter( 1, .186 );
 	(*plot).SetParName( 1, "#rho_{s}");
+	/* valore di $M_s$ */
 	(*plot).SetParameter( 2, .3074 );
 	(*plot).SetParName( 2, "M_{s}");
 

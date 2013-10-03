@@ -10,7 +10,7 @@
 #include "TMath.h"
 
 /* parametri d'interpolazione */
-#include "./pars.h"
+#include "./fit_pars.h"
 
 Double_t S ( Double_t x ) {
 	/* inizializzo la somma a zero */
@@ -66,7 +66,7 @@ Double_t alpha ( Double_t x, Double_t p ) {
 	return h_alpha( x, p - 1.5 ) + h_alpha( 1. / x, - p );
 }
 
-/* le funzioni $\beta_n(l)$ */
+/* le funzioni $\beta_n(l)$ con $n$ diverso da zero*/
 Double_t beta ( Double_t x, Double_t n ) {
 	/* termine tra parentesi */
 	Double_t tmp = alpha( x, n ) - 3. / ( n * ( 2. * n - 3. ) );
@@ -74,9 +74,23 @@ Double_t beta ( Double_t x, Double_t n ) {
 	return TMath::Power( - 1. / ( 4. * TMath::Pi() ), n ) * tmp;
 }
 
+/* funzione $\beta_0(l)$ */
+Double_t beta_0 ( Double_t x ) {
+	Double_t tmp = alpha( x, 0. );
+	/* aggiungo il fattore costante */
+	tmp += G;
+
+	/* restituisco il risultato */
+	return tmp;
+}
+
 /* funzione ausiliaria per la derivata */
 Double_t a_beta ( Double_t *x, Double_t *par ) {
-	return TMath::Power( x[0], 2. * par[0] ) * beta( x[0], par[0] );
+	Double_t tmp = beta( x[0], par[0] );
+	/* controllo se 'par[0] == 0' */
+	if ( par[0] == 0 ) tmp = beta_0( x[0] );
+
+	return TMath::Power( x[0], 2. * par[0] ) * tmp;
 }
 
 /* funzioni $\tilde \beta_n(l)$ */
@@ -90,7 +104,7 @@ Double_t t_beta ( Double_t x, Double_t n ) {
 	(*deriv).SetParameter( 0, n );
 
 	/* restituisco la funzione */
-	return (*deriv).Derivative( x ) / TMath::Power( x, n + 1. );
+	return (*deriv).Derivative( x ) * TMath::Power( x, 1. - 2 * n );
 }
 
 /* funzione $\psi(l)$ */

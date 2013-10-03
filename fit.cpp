@@ -83,14 +83,14 @@ main ( int argc, char *argv[] ) {
 		 */
 		fit[i] = new TF1("f1", "exp( - x / [0])", 0, 10);
 		/* il tempo di autocorrelazione è dell'ordine di due */
-		(*fit[i]).SetParameter(0, 2);
+		(*fit[i]).SetParameter( 0, 1. );
 		/* la traslazione verticale dovrebbe essere nulla */
 //		(*fit[i]).SetParameter(1, 0);
 		/* il coefficiente di dilatazione dovrebbe essere uno */
 //		(*fit[i]).SetParameter(2, 1);
 
 		/* imposto il nome della costante 'p[0]' */
-		(*fit[i]).SetParName(0, "Decay time");
+		(*fit[i]).SetParName( 0, "Decay time" );
 		/* imposto il nome della costante 'p[0]' */
 //		(*fit[i]).SetParName(1, "Traslation");
 		/* imposto il nome della costante 'p[0]' */

@@ -23,51 +23,29 @@
 #include <stdlib.h>
 
 /* funzioni matematiche per l'interpolazione */
-#include "./functions.cc"
+#include "./fit_functions.cc"
 
-/* funzione per interpolare la scuscettività uniforme */
-Double_t cu ( Double_t *x, Double_t *par ) {
-	/* variabile ausiliaria: par[0] = $\hbar c$ */
-	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
-
-	/* parte tra parentesi */
-	Double_t tmp = t_beta( l, 2 );
-	tmp -= TMath::Power( t_beta( l, 1. ), 2. ) / 3.;
-	tmp -= 6. * psi( l );
-	/* moltiplico per il coefficiente davanti: par[1] = $\rho_s$ */
-	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2 ); 
-
-	/* primo termine in beta */
-	tmp += t_beta ( l, 1. ) * l * l / ( B * par[1] );
-	/* divido per tre */
-	tmp = tmp / 3.;
-	/* aggiungo uno */
-	++ tmp;
-
-	/* moltiplico per il primo coefficiente */
-	tmp = tmp * 2. * par[1] / ( 3. * par[0] * par[0] );
-
-	/* restituisco il valore della funzione */
-	return tmp;
-}
-
-/* funzione per interpolare la suscettività aòternata */
-Double_t cs ( Double_t *x, Double_t *par ) {
+/* funzione per interpolare l'energia */
+Double_t en ( Double_t *x, Double_t *par ) {
 	/* variabile ausiliaria: par[0] = $\hbar c$ */
 	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
 	
-	/* termine tra parentesi */
-	Double_t tmp = 3. * beta( l, 2. );
-	tmp += TMath::Power( beta( l, 1. ), 2. );
-	/* moltiplico per il coefficiente davanti: par[1] = $\rho_s$ */
-	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2. ); 
-
-	/* termini fuori dalla parentesi interna */
-	tmp += 2. * beta( l, 1. ) * l * l / ( B * par[1] );
+	/* 
+	 * termine tra parentesi (ho sfruttato le funzioni note per non
+	 * dover riscrivere un'altra funzione per calcolare $l d\beta/dl$)
+	 */
+	Double_t tmp = t_beta( l, 1. ) - beta( l, 1. );
+	/* moltiplico per il coefficiente */
+	tmp = - tmp * l * l / ( par[1] * B);
+	/* primo termine fuori dalle parentesi */
+	tmp += t_beta( l, 0. );
 	/* incremento di uno */
-	++ tmp;
+	tmp ++;
 
-	return B * TMath::Power( par[2] * x[0] , 2. ) * tmp / 3.;
+	/* sistemo il coefficiente all'esterno */
+	tmp = tmp / ( 3. * B * x[0] * x[0] );
+
+	return par[2] - tmp;
 }
 
 int
@@ -99,24 +77,24 @@ main ( int argc, char *argv[] ) {
 	/* 9 = blu */
 	(*data).SetMarkerColor( 9 );
 	/* titolo del grafico */
-	(*data).SetTitle( "Uniform Susceptivity" );
+	(*data).SetTitle( "Energy density" );
 	(*data).SetMarkerStyle( 20 );
 	(*data).SetMarkerSize( 0.5 );
 	/* imposto i titoli degli assi */
 	(*data).GetXaxis()->SetTitle( "Lattice side" );
-	(*data).GetYaxis()->SetTitle( "Susceptivity" );
+	(*data).GetYaxis()->SetTitle( "Energy density" );
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
-	TF1 *plot = new TF1( "cs", cs, 6., 20., 3 );
+	TF1 *plot = new TF1( "en", en, 6., 20., 3 );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );
 	(*plot).SetParName( 0, "#hbar c");
 	/* valore di $\rho_s$ */
 	(*plot).SetParameter( 1, .186 );
 	(*plot).SetParName( 1, "#rho_{s}");
-	(*plot).SetParameter( 2, .3074 );
-	(*plot).SetParName( 2, "M_{s}");
+	(*plot).SetParameter( 2, - 0.6693 );
+	(*plot).SetParName( 2, "e_{0}");
 
 	TCanvas *c = new TCanvas( "out", "Regressione" );
 	(*c).SetGridx();
@@ -128,8 +106,8 @@ main ( int argc, char *argv[] ) {
 	/* disegno il grafico */
 	(*data).Draw("APC");
 	/* stampo i grafici */
-	(*c).Print( "cs.svg", "svg");
-	(*c).Print( "cs.pdf", "pdf");
+	(*c).Print( "en.svg", "svg");
+	(*c).Print( "en.pdf", "pdf");
 
 	exit(EXIT_SUCCESS);
 }
