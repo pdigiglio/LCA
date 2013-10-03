@@ -49,5 +49,5 @@ fit_en.o: fit_en.cpp fit_functions.cc fit_pars.h
 
 # remove $(MAIN) binary file
 clean:
-	@ rm --recursive --verbose $(MAIN) fit_risultati
+	@ rm --recursive --verbose *.o #$(MAIN) fit_cu fit_en fit_cs
 .PHONY: clean
