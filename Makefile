@@ -16,6 +16,10 @@ CXXFLAGS = -Wall -O2 -Wextra -pedantic -march=$(MARCH) -std=$(STD) \
 analisi: analisi.cpp
 	$(CXX) $< -o $@ $(CXXFLAGS)
 
+# rounding routine
+cut: cut.c
+	$(CXX) $< -o $@ $(CXXFLAGS)
+
 # auto-correlator fit routine (requires ROOT)
 fit: fit.cpp
 	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
