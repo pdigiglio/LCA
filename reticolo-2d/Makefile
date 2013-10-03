@@ -26,9 +26,26 @@ $(MAIN): %: %.cpp %.cc %.h Makefile $(INCLUDE)
 	$(CXX) $< -o $@ $(CXXFLAGS)
 	@ echo
 
-# results fit routine (requires ROOT)
-fit_risultati: fit_risultati.cpp
-	$(CXX) $< `root-config --libs --cflags` -o $@ $(CXXFLAGS)
+# fit routines for analyzing results (requires ROOT)
+fit: fit_cu fit_cs fit_en
+
+fit_cu: fit_cu.o
+	$(CXX) `root-config --libs --cflags` -o $@ $< $(CXXFLAGS)
+
+fit_cu.o: fit_cu.cpp fit_functions.cc fit_pars.h
+	$(CXX) `root-config --libs --cflags` -c $< $(CXXFLAGS)
+
+fit_cs: fit_cs.o
+	$(CXX) `root-config --libs --cflags` -o $@ $< $(CXXFLAGS)
+
+fit_cs.o: fit_cs.cpp fit_functions.cc fit_pars.h
+	$(CXX) `root-config --libs --cflags` -c $< $(CXXFLAGS)
+
+fit_en: fit_en.o
+	$(CXX) `root-config --libs --cflags` -o $@ $< $(CXXFLAGS)
+
+fit_en.o: fit_en.cpp fit_functions.cc fit_pars.h
+	$(CXX) `root-config --libs --cflags` -c $< $(CXXFLAGS)
 
 # remove $(MAIN) binary file
 clean:
