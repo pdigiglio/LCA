@@ -52,27 +52,6 @@ function create_global {
 # SDOM (assicurati di aver modificato opportunamente "analisi.cpp").
 # Accetta come argomenti solo gli affissi e l'ordine di arresto.
 function vs_plot {
-	# controllo se il file temporaneo esiste cancello il contenuto
-# 	if [[ -e ${tmp} ]]
-# 	then
-# 		# controllo se il ${MAIN} è più vecchio dell' ${tmp}
-# 		if [[ `stat -c %Z ${MAIN}` < `stat -c %Z ${tmp}` ]]
-# 		then
-# 			echo "Il file '${tmp}' è più recente del file '${MAIN}'!"
-# 			# in questo caso non ha senso ri-analizzare i dati, per 
-# 			# cui esco dalla funzione
-# 			return
-# 		else
-# 			# avverto l'utente che sto per sovrascrivere
-# 			echo "################################################"
-# 			echo "#"
-# 			echo "# Trovato vecchio file '${tmp}': lo sovrascrivo."
-# 			echo "#"
-# 			echo "################################################"
-# 			echo
-# 		fi
-# 	fi
-
 	# Creo i titoli per le colonne
 	echo -e "#ord\t\tvv_us\t\tv_us\t\tv_ss\t\ts_ss\t\tv_en\t\ts_en" > ${vs}
 
@@ -121,7 +100,7 @@ function vs_plot {
 	# Salvo i tempi di auto-correlazione
 	head --lines=2 ac_times.dat >> ../tempi_auto-corr.dat
 	# Creo i file dei risultati e i grafici degli errori
-	cut --fields=1,2,3,4,5,13,14,15,16,17,18 ${tmp} | head --lines=1 >> ${R}
+	cut --fields=1,2,3,4,5,13,14,15,16,17,18 ${tmp} | tail --lines=1 >> ${R}
 	cut --fields=6,7,8,9,10,11,12 ${tmp} >> ${vs}	
 
 	# aggiungo le informazioni nei file
@@ -138,18 +117,19 @@ J=1
 N=1
 T=256
 
-SWEEP=750000
+SWEEP=3000
 
 # "root" of the path to move file in
 root="/home/paolo/Pubblici/Dropbox/tesi/data/3d/"
 #####################################################################
 
-# Per N = 32 siti
-for (( m = 1; m < 10; m ++ ))
-do
-	let M=$[ $m * 2 + 4 ]
-	let N=${M}
-	# percorso in cui spostare i file
-	DIR=${root}"B${B}.N${N}.M${M}.T${T}/"
-	main
+for B in 5 10 15; do
+	for (( m = 0; m < 10; m ++ )); do
+		let M=$[ $m * 2 + 4 ]
+		let N=${M}
+		let T=$[ 256 * ${B} / 5 ]
+		# percorso in cui spostare i file
+		DIR=${root}"B${B}.N${N}.M${M}.T${T}/"
+		main
+	done
 done

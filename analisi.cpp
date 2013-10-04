@@ -42,17 +42,17 @@
  * ==================================================================
  */
 void
-round ( double *val, double *err, unsigned int l ) {
+round ( long double *val, long double *err, unsigned int l ) {
 	/* variabile per l'esponente */
 	signed short int exp = 0;
 	/* variabili temporanee per la SDOM e valore*/
-	double tmp = (double) 0;
+	long double tmp = (long double) 0;
 
 	/* stampo informazioni generiche */
 //	printf( "# Sweep: %u\n", l );
 	for ( unsigned short int i = 0; i < 3; i ++ ) {
 		/* assegno la variabile temporanea */
-		tmp = (double) err[i] / sqrt(l);
+		tmp = (long double) err[i] / sqrt(l);
 		/* assegno l'esponente */
 		exp = (short) log10( fabs( tmp ) );
 
@@ -108,30 +108,30 @@ main ( int argc, char *argv[] ) {
 	 * -------------------------------------------------------------*/
 
 	/* valori delle misure */
-	double **f = NULL;
-	double temp;
+	long double **f = NULL;
+	long double temp;
 
 	/* media ed errore (inizializzate a zero) */
-	double mean[3] = {}, err[3] =  {};
+	long double mean[3] = {}, err[3] =  {};
 
 	/* 
 	 * XXX faccio scorrere delle letture a vuoto per saltare la regis-
 	 * trazione delle prime 'SKIP' misure
 	 */
 	for ( unsigned short int z = 0; z < SKIP; z ++ )
-		fscanf( pFile, "%lf, %lf, %lf\n", &temp, &temp, &temp );
+		fscanf( pFile, "%Lf, %Lf, %Lf\n", &temp, &temp, &temp );
 
 	/* acquisisco i valori e calcolo la media */
 	unsigned int l, i;
 	for ( l = 0; !( feof(pFile) ); l ++ ) {	
 		/* alloco la memoria per i valori in input */
-		f = (double **) realloc( f, (l + 1) * sizeof(double *) );
+		f = (long double **) realloc( f, (l + 1) * sizeof(long double *) );
 		if ( f == NULL ) {
 			fprintf ( stderr, "\ndynamic memory reallocation failed\n" );
 			exit (EXIT_FAILURE);
 		}
 
-		f[l] = (double *) malloc( 3 * sizeof(double) );
+		f[l] = (long double *) malloc( 3 * sizeof(long double) );
 		if ( f[l] == NULL ) {
 			fprintf ( stderr, "\ndynamic memory allocation failed\n" );
 			exit (EXIT_FAILURE);
@@ -139,30 +139,30 @@ main ( int argc, char *argv[] ) {
 		
 		/* azzero i valori di '**f' */
 		for ( unsigned short int j = 0; j < 3; j ++ )
-			f[l][j] = (double) 0;
+			f[l][j] = (long double) 0;
 
 		/* calcolo i cluster */
 		for ( i = 0; i < ord && !( feof(pFile) ); i ++ ) {
 			/* prima colonna */
-			fscanf(pFile, "%lf, ", &temp);
+			fscanf(pFile, "%Lf, ", &temp);
 			f[l][0] += temp;
 
 			/* seconda colonna */
-			fscanf(pFile, "%lf, ", &temp);
+			fscanf(pFile, "%Lf, ", &temp);
 			f[l][1] += temp;
 
 			/* terza colonna */
-			fscanf(pFile, "%lf\n", &temp);
+			fscanf(pFile, "%Lf\n", &temp);
 			f[l][2] += temp;
 		}
 		
 //		printf( "%u\t", l );
 		/* normalizzo i cluster ed aggiorno le medie */
 		for ( unsigned short int j = 0; j < 3; j ++ ) {
-			f[l][j] = (double) f[l][j] / i;
+			f[l][j] = (long double) f[l][j] / i;
 //			printf("%G\t", f[l][j]);
 			mean[j] += f[l][j];
-			err[j] += pow( f[l][j], (double) 2);
+			err[j] += pow( f[l][j], (long double) 2);
 		}
 //		printf("\n");
 	}
@@ -196,14 +196,14 @@ main ( int argc, char *argv[] ) {
 	fprintf( stdout, "%u\t", ord);
 	for ( unsigned short int j = 0; j < 3; j ++ ) {
 		/* normalizzo la media */
-		mean[j] = (double) mean[j] / l;
+		mean[j] = (long double) mean[j] / l;
 
 		/* calcolo la varianza */
 		err[j] = err[j] / l;
-		err[j] = (double) sqrt( err[j] - pow( mean[j], (double) 2) );
+		err[j] = (long double) sqrt( err[j] - pow( mean[j], (long double) 2) );
 
 		/* stampo nel file varianza e sdom */
-		fprintf( stdout, "%f\t%f\t", err[j], err[j] / sqrt(l) );
+		fprintf( stdout, "%Lf\t%Lf\t", err[j], err[j] / sqrt(l) );
 	}
 	/* stampo medie ed errori arrotondati */
 	round( mean, err, l );
@@ -221,7 +221,7 @@ main ( int argc, char *argv[] ) {
 	 *-----------------------------------------------------------------------------*/
 	
 	/* coefficienti di normalizzazione */
-	double norm[3] = { (double) 1, (double) 1, (double) 1 };
+	long double norm[3] = { (long double) 1, (long double) 1, (long double) 1 };
 
 	/* apro un file di output (lo creo) */
 	FILE *oFile = fopen( "ac.dat" , "w" );
@@ -238,9 +238,9 @@ main ( int argc, char *argv[] ) {
 		
 		for ( unsigned short int j = 0; j < 3; j ++ ) {
 			/* variabile temporanea */
-			temp = (double) 0;
+			temp = (long double) 0;
 			/* riutilizzo la variabile per l'errore */
-			err[j] = (double) 0;
+			err[j] = (long double) 0;
 
 			/*
 			 * aggiorno il j-esimo autocorrelatore e il suo errore
@@ -252,7 +252,7 @@ main ( int argc, char *argv[] ) {
 			}
 
 			/* normalizzo auto-correlatore e errore */
-			temp = (double) temp / ( l - t );
+			temp = (long double) temp / ( l - t );
 			/* uso la correzione di Bessel */
 			err[j] = sqrt( ( err[j] / (l - t) - pow (temp, 2) ) / (l - t - 1) );
 
@@ -261,7 +261,7 @@ main ( int argc, char *argv[] ) {
 				norm[j] = temp - pow(mean[j], 2);
 			
 			/* stampo i valori normalizzati */
-			fprintf( oFile, "%g\t%g\t", (double) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
+			fprintf( oFile, "%Lg\t%Lg\t", (long double) ( temp - pow(mean[j], 2) ) / norm[j], err[j] / norm[j] );
 		}
 		fprintf( oFile, "\n");
 	}

@@ -17,7 +17,8 @@ function move {
 	fi
 
 	# sposto i file
-	mv --verbose --update {var,sdom}.jpeg data.dat ${vs} ac_times.dat --target-directory=${DIR}
+	# aggiungere 'data.dat'!
+	mv --verbose --update {var,sdom}.jpeg ${vs} data.dat ac_times.dat --target-directory=${DIR}
 
 	# sposto dati e grafici degli autocorrelatori
 	for (( i = 1; i <= 30; i ++ ))
@@ -39,6 +40,15 @@ function main {
 	#
 	#################################################################
 
+	################################################################
+	# XXX Da aggiornare! sicuramente non funziona! 
+	#
+	# Creo il file header con i parametri inseriti qui
+	create_global
+	# Compilo il programma e lo eseguo
+	make -j3 && ./reticolo-2d >> risultati_MAIN.dat
+	################################################################
+
 	# creo una directory di lavoro temporanea e mi ci sposto
 	mkdir --parents --verbose ./temp
 	# copio i binari per l'analisi dei dati nella cartella temporanea
@@ -50,16 +60,9 @@ function main {
 	echo -e "\n > Mi sposto in '`pwd`'\n"
 
 	# copio il file di dati (dev'essere stato generato)
-	cp --archive --verbose --update ${DIR}${MAIN} .
+	cp --archive --verbose --update ../data.dat .  # ${DIR}${MAIN} .
+# 	head --lines=1000 ${DIR}${MAIN} > ./data.dat
 
-	################################################################
-	# XXX Da aggiornare! sicuramente non funziona! 
-	#
-	# Creo il file header con i parametri inseriti qui
-# 	create_global
-	# Compilo il programma e lo eseguo
-# 	make -j3 && ./reticolo_2d >> risultati.dat
-	################################################################
 
 	#################################################################
 	#

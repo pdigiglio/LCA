@@ -51,27 +51,6 @@ function create_global {
 # SDOM (assicurati di aver modificato opportunamente "analisi.cpp").
 # Accetta come argomenti solo gli affissi e l'ordine di arresto.
 function vs_plot {
-	# controllo se il file temporaneo esiste cancello il contenuto
-	if [[ -e ${tmp} ]]
-	then
-		# controllo se il ${MAIN} è più vecchio dell' ${tmp}
-		if [[ `stat -c %Z ${MAIN}` < `stat -c %Z ${tmp}` ]]
-		then
-			echo "Il file '${tmp}' è più recente del file '${MAIN}'!"
-			# in questo caso non ha senso ri-analizzare i dati, per 
-			# cui esco dalla funzione
-			return
-		else
-			# avverto l'utente che sto per sovrascrivere
-			echo "################################################"
-			echo "#"
-			echo "# Trovato vecchio file '${tmp}': lo sovrascrivo."
-			echo "#"
-			echo "################################################"
-			echo
-		fi
-	fi
-
 	# Creo i titoli per le colonne
 	echo -e "#ord\t\tvv_us\t\tv_us\t\tv_ss\t\ts_ss\t\tv_en\t\ts_en" > ${vs}
 
@@ -135,24 +114,38 @@ function vs_plot {
 B=1
 J=1
 N=32
-M=256
+M=32
 
-SWEEP=2000000
+SWEEP=20000
 
 # "root" of the path to move file in
 root="/home/paolo/Pubblici/Dropbox/tesi/data/2d/"
 #####################################################################
 
-# Per N = 32 siti
-for (( m = 1; m < 10; m ++ ))
-do
-	let M=$[ $m * 32 ]
-	# percorso in cui spostare i file
-	DIR=${root}"B${B}.N${N}.M${M}/"
-	main
+STOP=20
+# genero il file contenente le lunghezze
+for (( b = 1; b < 4; b ++ )); do
+	# modifico il valore di $\beta$
+	let B=${b}
+	for (( m = 1; m <= ${STOP}; m ++ )); do
+		let M=$[ 16 * ${m} * ${b} ]
+		create_global
+		make && ./reticolo-1d
+	done
+# 	tail --lines=$[ 2 * ${STOP} ] ./lunghezze.dat > ./lunghezze_B${B}.dat
+# 	echo "SWEEP ${SWEEP}" >> lunghezze_B${B}.dat
 done
 
-## Per N = 128 siti
+# # Per N = 32 siti
+# for (( m = 1; m < 10; m ++ ))
+# do
+# 	let M=$[ $m * 32 ]
+# 	# percorso in cui spostare i file
+# 	DIR=${root}"B${B}.N${N}.M${M}/"
+# 	main
+# done
+# 
+# # Per N = 128 siti
 # let N=128
 # 
 # #####################################################################
