@@ -26,8 +26,11 @@ reticolo-2d/temp/
 *.o
 
 # specific binary names
-fit_*
-fit
+#fit_*
+#fit
+fit_en
+fit_cu
+fit_cs
 analisi
 cut
 reticolo-1d/reticolo-1d
