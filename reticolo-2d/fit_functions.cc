@@ -12,6 +12,7 @@
 /* parametri d'interpolazione */
 #include "./fit_pars.h"
 
+/* somme infinite troncate all'ordine 'STOP' */
 Double_t S ( Double_t x ) {
 	/* inizializzo la somma a zero */
 	Double_t sum = (Double_t) 0;
@@ -22,7 +23,8 @@ Double_t S ( Double_t x ) {
 	/* sistemo i coefficienti */
 	sum = 2. * sum;
 	/* incremento ancora di uno la somma e ritorno */
-	return ++ sum;
+	++ sum;
+	return sum;
 }
 
 /* funzione (ausiliaria) integranda per ottenere 'h_alpha()') */

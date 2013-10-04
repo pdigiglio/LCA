@@ -121,7 +121,7 @@ main ( int argc, char *argv[] ) {
 	(*c).SetGridy();
 	
 	/* interpolo: "Q" (secondo parametro) sta per "quiet" */
-//	(*data).Fit("cu", "", "", 6., 20. );
+	(*data).Fit("cu", "", "", 6., 20. );
 
 	/* disegno il grafico */
 	(*data).Draw("APC");

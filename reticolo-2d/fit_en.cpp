@@ -86,7 +86,7 @@ main ( int argc, char *argv[] ) {
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
-	TF1 *plot = new TF1( "en", en, 6., 20., 3 );
+	TF1 *plot = new TF1( "en", "[0] - [1]*exp(-x*[2])", 6., 20. );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );
 	(*plot).SetParName( 0, "#hbar c");
@@ -101,7 +101,7 @@ main ( int argc, char *argv[] ) {
 	(*c).SetGridy();
 	
 	/* interpolo: "Q" (secondo parametro) sta per "quiet" */
-//	(*data).Fit("cs", "", "", 6., 20. );
+	(*data).Fit("en", "", "", 6., 20. );
 
 	/* disegno il grafico */
 	(*data).Draw("APC");
