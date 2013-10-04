@@ -29,7 +29,7 @@ class Reticolo {
 		/* restituisce il numero di decadimenti temporali */
 		unsigned int get_time_decay (void);
 		/* restituisce il valore attuale della misura 'i' */
-		float get_msr (unsigned short int i);
+		double get_msr (unsigned short int i);
 
 		/* calcola medie ed incertezze (non normalizzate) */
 		void mean (void);
@@ -92,9 +92,9 @@ class Reticolo {
 			 * 0/1. suscettività uniforme/"staggered";
 			 * 3. 	densità d'energia.
 			 */
-			float val[3];
+			double val[3];
 			/* media, deviazione standard della media */
-			double mean[3] = {}, sdom[3] = {};
+			long double mean[3] = {}, sdom[3] = {};
 			/* numero di misure effettuate */
 			unsigned int lenght = 0;
 		} msr;
@@ -111,7 +111,7 @@ class Reticolo {
 		 * della placca interagente col sito che rappresenta l'ultimo
 		 * punto (quello più recente) del loop
 		 */
-		float next_ene (unsigned int n, unsigned int m, unsigned int t);
+		double next_ene (unsigned int n, unsigned int m, unsigned int t);
 
 		/* 
 		 * una volta determinati i vertici della placca, ne controlla

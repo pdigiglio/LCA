@@ -84,7 +84,7 @@ Reticolo::fill ( void ) {
 
 	/* inizializzo a zero le suscettività ed energie (temporanee) */
 	for ( unsigned short int i = 0; i < 3; i ++ )
-		msr.val[i] = (float) 0;
+		msr.val[i] = (double) 0;
 
 	/* copro l'intero reticolo con i cluster */
 	for ( unsigned short int n = 0; n < N ; n ++ )
@@ -109,8 +109,8 @@ Reticolo::fill ( void ) {
 
 	/* aggiorno medie e SDM (valori calcolati in 'Reticolo::loop()') */
 	for ( unsigned short int i = 0; i < 3; i ++ ) {
-		msr.mean[i] += (double) msr.val[i];
-		msr.sdom[i] += (double) pow( msr.val[i], 2 );
+		msr.mean[i] += (long double) msr.val[i];
+		msr.sdom[i] += (long double) pow( msr.val[i], 2 );
 	}
 } /* -----  end of method Reticolo::fill  ----- */
 
@@ -154,9 +154,9 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 	x[0] = n; x[1] = m; x[2] = t;
 
 	/* magnetizzazione uniforme */
-	float cu = (float) 0;
+	double cu = (double) 0;
 	/* magnetizzazione alternata inizializzata a zero */
-	unsigned short int cs = 0;
+	unsigned long int cs = 0;
 
 	/* faccio evolvere il loop finche' non torno al p.to di partenza */
 	do {
@@ -165,7 +165,7 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 		 * temporale quindi la calcolo solo a t = 0
 		 */
 		if ( !x[2] )
-			cu += Reticolo::spin( x[0], x[1], x[2] ) - (float) 1/2;
+			cu += Reticolo::spin( x[0], x[1], x[2] ) - (double) 1/2;
 	
 		/* aggiorno la magnetizzazione alternata */
 		cs ++;
@@ -178,10 +178,10 @@ Reticolo::loop ( unsigned int n, unsigned int m, unsigned int t ) {
 	} while ( x[0] != n || x[1] != m || x[2] != t);
 
 	/* aggiorno il valore della suscettività uniforme */
-	msr.val[0] += (float) pow( cu, 2 );
+	msr.val[0] += cu * cu;
 	
 	/* aggiorno la suscettività alternata */
-	msr.val[1] += pow( cs, 2 );
+	msr.val[1] += (double) cs * cs;
 } /* -----  end of method Reticolo::loop  ----- */
 
 /*
@@ -253,7 +253,7 @@ Reticolo::get_time_decay ( void ) {
  * Description: misura i-esima al tempo markoviano corrente
  * ------------------------------------------------------------------
  */
-float
+double
 Reticolo::get_msr (unsigned short int i = 0) {
 	return msr.val[i % 3];
 } /* -----  end of method Reticolo::get_msr  ----- */
@@ -267,7 +267,7 @@ Reticolo::get_msr (unsigned short int i = 0) {
  * 				tipo di placca con cui ingeragisce il sito.
  * ------------------------------------------------------------------
  */
-float
+double
 Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 	/* calcolo le coordinate dei vertici della placca */
 	Reticolo::plaque(n, m, t);
@@ -284,7 +284,7 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 		return (float) 0;
 	} else {
 		/* variabile ausiliaria per l'esponente */
-		float c = (float) 4 * B * J / T;
+		double c = (double) 4 * B * J / T;
 		/* 
 		 * controllo il tipo di placca, determino l'evoluzione e res-
 		 * tituisco l'intera energia della placca
@@ -294,14 +294,14 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 			case 1: {
 //				printf("CF: (%u, %u, %u)\n", xp[0][0], xp[0][1], xp[0][2]);
 				Reticolo::forced_continuation();
-				return (float) 1;
+				return (double) 1;
 			}
 
 			/* transizione forzata */
 			case 2: {
 //				printf("TF: (%u, %u, %u)\n", xp[0][0], xp[0][1], xp[0][2]);
 				Reticolo::forced_transition();
-				return ( 1. + 3 * exp(c) ) / ( 1. - exp(c) );
+				return ( 1. + 3. * exp(c) ) / ( 1. - exp(c) );
 			}
 
 			/* decadimento opzionale */
@@ -318,7 +318,7 @@ Reticolo::next_ene (unsigned int n, unsigned int m, unsigned int t) {
 	exit(EXIT_FAILURE);
 
 	/* evita errori di compilazione ma non viene _mai_ eseguito */
-	return (float) 0;
+	return (double) 0;
 } /* -----  end of method Reticolo::next_ene  ----- */
 
 /*
@@ -648,10 +648,10 @@ void
 Reticolo::mean ( void ) {
 	/* normalizzo le medie e calcolo gli errori */
 	for ( unsigned short int i = 0; i < 3; i ++ ) {	
-		msr.mean[i] = (double) msr.mean[i] / msr.lenght;
-		msr.sdom[i] = (double) msr.sdom[i] / msr.lenght;
+		msr.mean[i] = (long double) msr.mean[i] / msr.lenght;
+		msr.sdom[i] = (long double) msr.sdom[i] / msr.lenght;
 		/* uso la correzione di Bessel */
-		msr.sdom[i] = sqrt( (double) ( msr.sdom[i] - pow( msr.mean[i], 2 ) ) / ( msr.lenght - 1 ) );
+		msr.sdom[i] = sqrtl( ( long double) ( msr.sdom[i] - pow( msr.mean[i], 2 ) ) / ( msr.lenght - 1 ) );
 	}
 } /* -----  end of method Reticolo::mean  ----- */
 
@@ -665,16 +665,16 @@ Reticolo::mean ( void ) {
 void
 Reticolo::print_results ( void ) {
 	/* suscettività uniforme */
-	msr.mean[0] = ((double) B / ( N * M )) * msr.mean[0];
-	msr.sdom[0] = ((double) B / ( N * M )) * msr.sdom[0];
+	msr.mean[0] = ((long double) B / ( N * M )) * msr.mean[0];
+	msr.sdom[0] = ((long double) B / ( N * M )) * msr.sdom[0];
 
 	/* suscettività alternata */
-	msr.mean[1] = ((double) B / ( 4 * N * M * T * T )) * msr.mean[1];
-	msr.sdom[1] = ((double) B / ( 4 * N * M * T * T )) * msr.sdom[1];
+	msr.mean[1] = ((long double) B / ( 4 * N * M * T * T )) * msr.mean[1];
+	msr.sdom[1] = ((long double) B / ( 4 * N * M * T * T )) * msr.sdom[1];
 
 	/* energia */
-	msr.mean[2] = ((double) J / ( M * N * T )) * msr.mean[2];
-	msr.sdom[2] = ((double) J / ( M * N * T )) * msr.sdom[2];
+	msr.mean[2] = ((long double) J / ( M * N * T )) * msr.mean[2];
+	msr.sdom[2] = ((long double) J / ( M * N * T )) * msr.sdom[2];
 
 	/* stampo i risultati sotto forma di tabella */	
 	printf( "# RISULTATI (N. sweep: %u)\n"

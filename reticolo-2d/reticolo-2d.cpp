@@ -63,7 +63,7 @@ main ( void ) {
 
 		/* stampo le misure correnti in un file di testo ausiliario */
 		fprintf( oFile, "%f, ", ((double) B / (N * M)) * reticolo.get_msr(0));
-		fprintf( oFile, "%f, ", ((double) B / (4 * N * M * T)) * reticolo.get_msr(1));
+		fprintf( oFile, "%f, ", ((double) B / (4 * N * M * T * T)) * reticolo.get_msr(1));
 		fprintf( oFile, "%f\n", ((double) J / (N * M * T)) * reticolo.get_msr(2));
 
 		/* faccio la media delle lunghezze dei loop */
