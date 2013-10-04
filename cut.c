@@ -83,6 +83,7 @@ main ( int argc, char *argv[] ) {
 	/*---------------------------------------------------------------
 	 *  XXX Questa parte va adattata al formato del file input
 	 *-------------------------------------------------------------*/
+
 	/* prime colonne di interi */
 	unsigned short int a;
 	/* altre colonne: valore e errore */
@@ -90,22 +91,23 @@ main ( int argc, char *argv[] ) {
 	/* finché il file non finisce */
 	while ( !( feof( in ) ) ) {
 		/* stampo le prime colonne di interi */
-		for ( unsigned short int t = 0; t < 4; t ++) {
-			fscanf( in, "%hu", &a );
+		for ( unsigned short int t = 0; t < 1; t ++ ) {
+			fscanf( in, "%hu\t", &a );
 			printf( "%hu\t", a );
 		}
 
-		fscanf( in, "%f", &val);
-		printf("%g\t", val);
+//		fscanf( in, "%f\t", &val );
+//		printf( "%f\t", val);
 
 		/* arrotondo le altre tre colonne */
-		for ( unsigned short int t = 0; t < 2; t ++ ) {
-			fscanf( in, "%f\t%f\t", &val, &err );
-			round( val, err );
+		for ( unsigned short int t = 0; t < 1; t ++ ) {
+			fscanf( in, "%f\t%f\n", &val, &err );
+			round( (float) val / (a * a), (float) err / (a * a) );
 		}
+
 		/* le ultime due colonne */
-		fscanf( in, "%f\t%f\n", &val, &err );
-		round( val, err );
+//		fscanf( in, "%f\t%f\n", &val, &err );
+//		round( val, err );
 
 		/* vado a capo */
 		printf("\n");

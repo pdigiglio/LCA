@@ -3,11 +3,11 @@
 #ifndef  global_H
 #define  global_H
 
-#define N 128	/* numero atomi */
-#define M 16	/* 2 * numero di Trotter */
+#define N 32	/* numero atomi */
+#define M 960	/* 2 * numero di Trotter */
 
 #define J 1
-#define B 16
+#define B 3
 
 #define MSR 20000
 
