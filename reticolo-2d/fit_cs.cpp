@@ -1,7 +1,7 @@
 /*
  * ==================================================================
  *
- *       Filename:  fit_risultati.cpp
+ *       Filename:  fit_cs.cpp
  *
  *    Description:  Programma che sfrutta la suite ROOT per interpola-
  *    				re i risultati dell'esecuzione della versione
@@ -25,7 +25,11 @@
 /* funzioni matematiche per l'interpolazione */
 #include "./fit_functions.cc"
 
-/* funzione per interpolare la suscettività aòternata */
+/* 
+ * funzione per interpolare la suscettività alternata
+ * XXX questa funzione interpola la suscettività normalizzata all'area
+ * del reticolo spaziale
+ */
 Double_t cs ( Double_t *x, Double_t *par ) {
 	/* variabile ausiliaria: par[0] = $\hbar c$ */
 	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
@@ -41,7 +45,8 @@ Double_t cs ( Double_t *x, Double_t *par ) {
 	/* incremento di uno */
 	++ tmp;
 
-	return B * TMath::Power( par[2] * x[0] , 2. ) * tmp / 3.;
+	/* il parametro 'par[2]' è la magnetizzazione staggered */
+	return B * par[2] * par[2] * tmp / 3.;
 }
 
 int

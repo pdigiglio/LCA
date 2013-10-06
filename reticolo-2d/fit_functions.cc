@@ -79,7 +79,11 @@ Double_t beta ( Double_t x, Double_t n ) {
 /* funzione $\beta_0(l)$ */
 Double_t beta_0 ( Double_t x ) {
 	Double_t tmp = alpha( x, 0. );
-	/* aggiungo il fattore costante */
+	/* 
+	 * aggiungo il fattore costante
+	 * XXX in realtà potrei anche evitarlo visto che della funzione 
+	 * 'beta_0' viene utilizzata soltanto la derivata
+	 */
 	tmp += G;
 
 	/* restituisco il risultato */
@@ -88,11 +92,12 @@ Double_t beta_0 ( Double_t x ) {
 
 /* funzione ausiliaria per la derivata */
 Double_t a_beta ( Double_t *x, Double_t *par ) {
-	Double_t tmp = beta( x[0], par[0] );
 	/* controllo se 'par[0] == 0' */
-	if ( par[0] == 0 ) tmp = beta_0( x[0] );
-
-	return TMath::Power( x[0], 2. * par[0] ) * tmp;
+	if ( par[0] == 0 )
+		return beta_0( x[0] );
+	
+	/* se 'par[0] != 0' */
+	return TMath::Power( x[0], 2. * par[0] ) * beta( x[0], par[0] );
 }
 
 /* funzioni $\tilde \beta_n(l)$ */
@@ -106,13 +111,13 @@ Double_t t_beta ( Double_t x, Double_t n ) {
 	(*deriv).SetParameter( 0, n );
 
 	/* restituisco la funzione */
-	return (*deriv).Derivative( x ) * TMath::Power( x, 1. - 2 * n );
+	return (*deriv).Derivative( x ) / TMath::Power( x, 2 * n - 1 );
 }
 
 /* funzione $\psi(l)$ */
 Double_t psi ( Double_t x ) {
 	Double_t tmp = beta( x, 2. );
-	tmp += TMath::Power( beta( x, 1 ), 2 );
+	tmp += TMath::Power( beta( x, 1 ), 2. );
 
 	/* sistemo i co)fficienti */
 	return - tmp / 3.;

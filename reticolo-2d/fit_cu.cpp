@@ -1,7 +1,7 @@
 /*
  * ==================================================================
  *
- *       Filename:  fit_risultati.cpp
+ *       Filename:  fit_cu.cpp
  *
  *    Description:  Programma che sfrutta la suite ROOT per interpola-
  *    				re i risultati dell'esecuzione della versione
@@ -35,7 +35,7 @@ Double_t cu ( Double_t *x, Double_t *par ) {
 	tmp -= TMath::Power( t_beta( l, 1. ), 2. ) / 3.;
 	tmp -= 6. * psi( l );
 	/* moltiplico per il coefficiente davanti: par[1] = $\rho_s$ */
-	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2 ); 
+	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2. ); 
 
 	/* primo termine in beta */
 	tmp += t_beta ( l, 1. ) * l * l / ( B * par[1] );
@@ -44,31 +44,9 @@ Double_t cu ( Double_t *x, Double_t *par ) {
 	/* aggiungo uno */
 	++ tmp;
 
-	/* moltiplico per il primo coefficiente */
-	tmp = tmp * 2. * par[1] / ( 3. * par[0] * par[0] );
-
-	/* restituisco il valore della funzione */
-	return tmp;
+	/* moltiplico per il primo coefficiente e restituisco */
+	return tmp * 2. * par[1] / ( 3. * par[0] * par[0] );
 }
-//
-///* funzione per interpolare la suscettività aòternata */
-//Double_t cs ( Double_t *x, Double_t *par ) {
-//	/* variabile ausiliaria: par[0] = $\hbar c$ */
-//	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
-//	
-//	/* termine tra parentesi */
-//	Double_t tmp = 3. * beta( l, 2. );
-//	tmp += TMath::Power( beta( l, 1. ), 2. );
-//	/* moltiplico per il coefficiente davanti: par[1] = $\rho_s$ */
-//	tmp = tmp * TMath::Power( l * l / ( B * par[1] ), 2. ); 
-//
-//	/* termini fuori dalla parentesi interna */
-//	tmp += 2. * beta( l, 1. ) * l * l / ( B * par[1] );
-//	/* incremento di uno */
-//	++ tmp;
-//
-//	return B * TMath::Power( par[2] * x[0] , 2. ) * tmp / 3.;
-//}
 
 int
 main ( int argc, char *argv[] ) {
@@ -108,6 +86,7 @@ main ( int argc, char *argv[] ) {
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
+	/* XXX Interpolo sugli stessi valori utilizzati da W-Y */
 	TF1 *plot = new TF1( "cu", cu, 6., 20., 2 );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );

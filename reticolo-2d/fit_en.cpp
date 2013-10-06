@@ -1,7 +1,7 @@
 /*
  * ==================================================================
  *
- *       Filename:  fit_risultati.cpp
+ *       Filename:  fit_en.cpp
  *
  *    Description:  Programma che sfrutta la suite ROOT per interpola-
  *    				re i risultati dell'esecuzione della versione
@@ -34,9 +34,9 @@ Double_t en ( Double_t *x, Double_t *par ) {
 	 * termine tra parentesi (ho sfruttato le funzioni note per non
 	 * dover riscrivere un'altra funzione per calcolare $l d\beta/dl$)
 	 */
-	Double_t tmp = t_beta( l, 1. ) - beta( l, 1. );
+	Double_t tmp = t_beta( l, 1. ) - 3. * beta( l, 1. );
 	/* moltiplico per il coefficiente */
-	tmp = - tmp * l * l / ( par[1] * B);
+	tmp = tmp * l * l / ( par[1] * B );
 	/* primo termine fuori dalle parentesi */
 	tmp += t_beta( l, 0. );
 	/* incremento di uno */
@@ -45,6 +45,7 @@ Double_t en ( Double_t *x, Double_t *par ) {
 	/* sistemo il coefficiente all'esterno */
 	tmp = tmp / ( 3. * B * x[0] * x[0] );
 
+	/* 'par[2]' è la densità d'energia $e_0$ */
 	return par[2] - tmp;
 }
 
@@ -86,7 +87,7 @@ main ( int argc, char *argv[] ) {
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
-	TF1 *plot = new TF1( "en", "[0] - [1]*exp(-x*[2])", 6., 20. );
+	TF1 *plot = new TF1( "en", en, 6., 20. );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );
 	(*plot).SetParName( 0, "#hbar c");
