@@ -87,7 +87,7 @@ main ( int argc, char *argv[] ) {
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
-	TF1 *plot = new TF1( "en", en, 6., 20. );
+	TF1 *plot = new TF1( "en", en, 6., 20. , 3 );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );
 	(*plot).SetParName( 0, "#hbar c");

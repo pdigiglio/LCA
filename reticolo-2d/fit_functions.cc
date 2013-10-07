@@ -17,8 +17,17 @@ Double_t S ( Double_t x ) {
 	/* inizializzo la somma a zero */
 	Double_t sum = (Double_t) 0;
 	/* calcolo la somma in inversa */
-	for ( unsigned short int n = STOP; n > 0; n -- )
-		sum += TMath::Exp( - TMath::Pi() * x * n * n );
+//	for ( unsigned short int n = STOP; n > 0; n -- )
+//		sum += TMath::Exp( - TMath::Pi() * x * n * n );
+
+	/* calcolo le somme assegnando il grado di precisione */
+	Double_t precision = 1., tmp;
+	unsigned int n = 1;
+	do {
+		tmp = TMath::Exp( - TMath::Pi() * x * n * n );
+		sum += tmp;
+		n ++;
+	} while ( tmp / sum > precision );
 
 	/* sistemo i coefficienti */
 	sum = 2. * sum;
@@ -71,32 +80,35 @@ Double_t alpha ( Double_t x, Double_t p ) {
 /* le funzioni $\beta_n(l)$ con $n$ diverso da zero*/
 Double_t beta ( Double_t x, Double_t n ) {
 	/* termine tra parentesi */
-	Double_t tmp = alpha( x, n ) - 3. / ( n * ( 2. * n - 3. ) );
+	Double_t tmp = alpha( x, n );
+	/* se 'n != 0' aggiungo un termine */
+	if ( n )
+		tmp -= 3. / ( n * ( 2. * n - 3. ) );
 	/* sistemo il coefficiente */
 	return TMath::Power( - 1. / ( 4. * TMath::Pi() ), n ) * tmp;
 }
 
 /* funzione $\beta_0(l)$ */
-Double_t beta_0 ( Double_t x ) {
-	Double_t tmp = alpha( x, 0. );
-	/* 
-	 * aggiungo il fattore costante
-	 * XXX in realtà potrei anche evitarlo visto che della funzione 
-	 * 'beta_0' viene utilizzata soltanto la derivata
-	 */
-	tmp += G;
-
-	/* restituisco il risultato */
-	return tmp;
-}
+//Double_t beta_0 ( Double_t x ) {
+//	Double_t tmp = alpha( x, 0. );
+//	/* 
+//	 * aggiungo il fattore costante
+//	 * XXX in realtà potrei anche evitarlo visto che della funzione 
+//	 * 'beta_0' viene utilizzata soltanto la derivata
+//	 */
+//	tmp += G;
+//
+//	/* restituisco il risultato */
+//	return tmp;
+//}
 
 /* funzione ausiliaria per la derivata */
 Double_t a_beta ( Double_t *x, Double_t *par ) {
 	/* controllo se 'par[0] == 0' */
-	if ( par[0] == 0 )
-		return beta_0( x[0] );
+//	if ( par[0] == 0 )
+//		return beta_0( x[0] );
 	
-	/* se 'par[0] != 0' */
+	/* se 'par[0] = 0' */
 	return TMath::Power( x[0], 2. * par[0] ) * beta( x[0], par[0] );
 }
 
