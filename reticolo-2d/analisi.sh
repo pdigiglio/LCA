@@ -112,18 +112,15 @@ function vs_plot {
 # SYSTEM PARAMETERS
 #
 #####################################################################
-B=5
 J=1
-N=1
-T=256
 
-SWEEP=3000
+SWEEP=750000
 
 # "root" of the path to move file in
 root="/home/paolo/Pubblici/Dropbox/tesi/data/3d/"
 #####################################################################
 
-for B in 5 10 15; do
+for B in 10 15; do
 	for (( m = 0; m < 10; m ++ )); do
 		let M=$[ $m * 2 + 4 ]
 		let N=${M}

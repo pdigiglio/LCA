@@ -41,12 +41,12 @@ function main {
 	#################################################################
 
 	################################################################
-	# XXX Da aggiornare! sicuramente non funziona! 
+	# XXX questa parte serve per generare i dati
 	#
 	# Creo il file header con i parametri inseriti qui
-	create_global
+# 	create_global
 	# Compilo il programma e lo eseguo
-	make -j3 && ./reticolo-2d >> risultati_MAIN.dat
+# 	make -j3 && ./reticolo-2d >> risultati_MAIN.dat
 	################################################################
 
 	# creo una directory di lavoro temporanea e mi ci sposto
@@ -60,7 +60,7 @@ function main {
 	echo -e "\n > Mi sposto in '`pwd`'\n"
 
 	# copio il file di dati (dev'essere stato generato)
-	cp --archive --verbose --update ../data.dat .  # ${DIR}${MAIN} .
+	cp --archive --verbose --update ${DIR}${MAIN} .
 # 	head --lines=1000 ${DIR}${MAIN} > ./data.dat
 
 

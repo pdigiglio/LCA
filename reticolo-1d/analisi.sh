@@ -65,8 +65,8 @@ function vs_plot {
 		
 		# controllo se il programma ha creato il grafico
 		# dell'autocorrelatore
-		if [[ -e ac.dat ]]
-		then
+# 		if [[ -e ac.dat ]]
+# 		then
 			# modifico il nome del file contenente l'autocorrelatore che 
 			# viene prodotto dal programma "./analisi"
 			mv --verbose --update ac.dat ac_${k}.bak.dat
@@ -84,7 +84,7 @@ function vs_plot {
 					mv --verbose --update ac_${t}.${ext} ac_${k}_${t}.${ext}
 				done
 			done
-		fi
+# 		fi
 
 		# controllo se il programma ha creato il grafico
 		# delle misure in funzione della dimensione del cluster
@@ -99,7 +99,7 @@ function vs_plot {
 	# Salvo i tempi di auto-correlazione
 	head --lines=2 ac_times.dat >> ../tempi_auto-corr.dat
 	# Creo i file dei risultati e i grafici degli errori
-	cut --fields=1,2,3,4,12,13,14,15,16,17 ${tmp} | head --lines=1 >> ${R}
+	cut --fields=1,2,3,4,12,13,14,15,16,17 ${tmp} | tail --lines=1 >> ${R}
 	cut --fields=5,6,7,8,9,10,11 ${tmp} >> ${vs}	
 
 	# aggiungo le informazioni nei file
@@ -116,62 +116,49 @@ J=1
 N=32
 M=32
 
-SWEEP=20000
+SWEEP=2000000
 
 # "root" of the path to move file in
 root="/home/paolo/Pubblici/Dropbox/tesi/data/2d/"
 #####################################################################
 
-STOP=20
-# genero il file contenente le lunghezze
-for (( b = 1; b < 4; b ++ )); do
-	# modifico il valore di $\beta$
-	let B=${b}
-	for (( m = 1; m <= ${STOP}; m ++ )); do
-		let M=$[ 16 * ${m} * ${b} ]
-		create_global
-		make && ./reticolo-1d
-	done
-# 	tail --lines=$[ 2 * ${STOP} ] ./lunghezze.dat > ./lunghezze_B${B}.dat
-# 	echo "SWEEP ${SWEEP}" >> lunghezze_B${B}.dat
+
+# Per N = 32 siti
+for (( m = 1; m < 10; m ++ ))
+do
+	let M=$[ $m * 32 ]
+	# percorso in cui spostare i file
+	DIR=${root}"B${B}.N${N}.M${M}/"
+	main
 done
 
-# # Per N = 32 siti
-# for (( m = 1; m < 10; m ++ ))
-# do
-# 	let M=$[ $m * 32 ]
-# 	# percorso in cui spostare i file
-# 	DIR=${root}"B${B}.N${N}.M${M}/"
-# 	main
-# done
-# 
-# # Per N = 128 siti
-# let N=128
-# 
-# #####################################################################
-# let B=2
-# let M=16
-# # percorso in cui spostare i file
-# DIR=${root}"B${B}.N${N}.M${M}/"
-# main
-# #####################################################################
-# let B=4
-# let M=32
-# # percorso in cui spostare i file
-# DIR=${root}"B${B}.N${N}.M${M}/"
-# main
-# #####################################################################
-# let B=8
-# let M=64
-# # percorso in cui spostare i file
-# DIR=${root}"B${B}.N${N}.M${M}/"
-# main
-# #####################################################################
-# let B=16
-# for m in 16 32 64 128
-# do
-# 	let M=$m
-# 	# percorso in cui spostare i file
-# 	DIR=${root}"B${B}.N${N}.M${M}/"
-# 	main
-# done
+# Per N = 128 siti
+let N=128
+
+#####################################################################
+let B=2
+let M=16
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
+#####################################################################
+let B=4
+let M=32
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
+#####################################################################
+let B=8
+let M=64
+# percorso in cui spostare i file
+DIR=${root}"B${B}.N${N}.M${M}/"
+main
+#####################################################################
+let B=16
+for m in 16 32 64 128
+do
+	let M=$m
+	# percorso in cui spostare i file
+	DIR=${root}"B${B}.N${N}.M${M}/"
+	main
+done
