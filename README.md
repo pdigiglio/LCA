@@ -6,7 +6,7 @@ The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sp
 
 
 This work is mostly based on the [studies] [4] of Wiese and Ying, who first adapted the Loop Cluster Algorithm (LCA) to spin lattices.
-Another useful reference is Beard [Ph.D. thesis] [5], which exhaustively explains the algorithm details and extends it to continuum limit.
+Another useful reference is Beard's [Ph.D. thesis] [5], which exhaustively explains the algorithm details and extends it to continuum limit.
 
 
 LCA is a very efficient and ergodic algorithm which essentially consists in creating disjoint and non-intersecting paths --- according to specific rules --- over lattice.
