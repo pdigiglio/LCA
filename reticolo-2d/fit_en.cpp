@@ -24,9 +24,12 @@
 
 /* funzioni matematiche per l'interpolazione */
 #include "./fit_functions.cc"
+#include "TLegend.h"
 
 /* funzione per interpolare l'energia */
 Double_t en ( Double_t *x, Double_t *par ) {
+//	par[1] = .186;
+//	par[0] = 1.68;
 	/* variabile ausiliaria: par[0] = $\hbar c$ */
 	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
 	
@@ -34,19 +37,37 @@ Double_t en ( Double_t *x, Double_t *par ) {
 	 * termine tra parentesi (ho sfruttato le funzioni note per non
 	 * dover riscrivere un'altra funzione per calcolare $l d\beta/dl$)
 	 */
-	Double_t tmp = t_beta( l, 1. ) - 3. * beta( l, 1. );
+	Double_t tmp = l * betad( l, 1. ) - beta( l, 1. );
 	/* moltiplico per il coefficiente */
 	tmp = tmp * l * l / ( par[1] * B );
 	/* primo termine fuori dalle parentesi */
-	tmp += t_beta( l, 0. );
+	tmp += l * betad( l, 0. );
 	/* incremento di uno */
-	tmp ++;
-
-	/* sistemo il coefficiente all'esterno */
-	tmp = tmp / ( 3. * B * x[0] * x[0] );
+	tmp += 1.;
 
 	/* 'par[2]' è la densità d'energia $e_0$ */
-	return par[2] - tmp;
+	return par[2] - tmp / ( 3. * B * x[0] * x[0] );
+}
+
+/* funzione per interpolare l'energia */
+Double_t EN ( Double_t *x, Double_t *par ) {
+	/* variabile ausiliaria: par[0] = $\hbar c$ */
+	Double_t l = TMath::Power( B * par[0] / x[0], 1./3. );
+	
+	/* 
+	 * termine tra parentesi (ho sfruttato le funzioni note per non
+	 * dover riscrivere un'altra funzione per calcolare $l d\beta/dl$)
+	 */
+	Double_t tmp = tb1( l ) - 3. * b1( l );
+	/* moltiplico per il coefficiente */
+	tmp = tmp * l * l / ( par[1] * B );
+	/* primo termine fuori dalle parentesi */
+	tmp += tb0( l );
+	/* incremento di uno */
+	tmp += 1.;
+
+	/* 'par[2]' è la densità d'energia $e_0$ */
+	return par[2] - tmp / ( 3. * B * x[0] * x[0] );
 }
 
 int
@@ -74,27 +95,49 @@ main ( int argc, char *argv[] ) {
 	(*gStyle).SetOptFit();
 
 	/* file di dati */
-	TGraphErrors *data = new TGraphErrors( input );
-	/* 9 = blu */
-	(*data).SetMarkerColor( 9 );
+	TGraphErrors
+		*d = new TGraphErrors( "./results/en_B10_traslat.dat" ),
+		*data = new TGraphErrors( input );
+
+	/* 3/8 = verde vivo/spento */
+	(*data).SetMarkerColor( 8 );
+	/* 4 = blu vivo */
+	(*d).SetMarkerColor( 4 );
+
+	/* spessore linea minimo 1 - 10 */
+	(*data).SetLineWidth( 1 );
+	(*d).SetLineWidth( 1 );
+	/* tratteggiata */
+	(*data).SetLineStyle( 7 );
+	(*d).SetLineStyle( 5 );
+	/* 12/11 = grigio scuro/chiaro */
+	(*d).SetLineColor( 11 );
+
+
+	(*data).SetMarkerStyle( 20 );
+	(*data).SetMarkerSize( 0.8 );
+
+	(*d).SetMarkerStyle( 21 );
+	(*d).SetMarkerSize( 0.5 );
+
 	/* titolo del grafico */
 	(*data).SetTitle( "Energy density" );
-	(*data).SetMarkerStyle( 20 );
-	(*data).SetMarkerSize( 0.5 );
 	/* imposto i titoli degli assi */
 	(*data).GetXaxis()->SetTitle( "Lattice side" );
-	(*data).GetYaxis()->SetTitle( "Energy density" );
+//	(*data).GetYaxis()->SetTitle( "Energy density" );
 	(*data).GetXaxis()->CenterTitle();
 	(*data).GetYaxis()->CenterTitle();
 
 	TF1 *plot = new TF1( "en", en, 6., 20. , 3 );
+	/* colore linea: 2 = rosso */
+	(*plot).SetLineColor( 2 );
 	/* valore di $\hbar c$ */
 	(*plot).SetParameter( 0, 1.68 );
 	(*plot).SetParName( 0, "#hbar c");
 	/* valore di $\rho_s$ */
 	(*plot).SetParameter( 1, .186 );
 	(*plot).SetParName( 1, "#rho_{s}");
-	(*plot).SetParameter( 2, - 0.6693 );
+	(*plot).SetParameter( 2, - 0.6694 );
 	(*plot).SetParName( 2, "e_{0}");
 
 	TCanvas *c = new TCanvas( "out", "Regressione" );
@@ -102,10 +145,20 @@ main ( int argc, char *argv[] ) {
 	(*c).SetGridy();
 	
 	/* interpolo: "Q" (secondo parametro) sta per "quiet" */
-	(*data).Fit("en", "", "", 6., 20. );
+//	(*d).Fit("en", "Q", "" , 6., 20. );
 
 	/* disegno il grafico */
 	(*data).Draw("APC");
+	(*d).Draw( "PCSAME" );
+	(*plot).Draw( "SAME" );
+
+	/* stampo informazioni fit */
+	printf( "#hbar c\terr\t\trho_{s}\terr\te_{0}\t\terr\n" );
+	for ( unsigned short int i = 0; i < 3; i ++ )
+		printf( "%g\t%g\t", (*plot).GetParameter( i ), (*plot).GetParError( i ) );
+
+	printf( "\n" );
+
 	/* stampo i grafici */
 	(*c).Print( "en.svg", "svg");
 	(*c).Print( "en.pdf", "pdf");

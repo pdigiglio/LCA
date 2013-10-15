@@ -36,7 +36,7 @@ function create_header () {
 /* fisso il valore di $\beta$ */
 #define B ${B}
 /* valore del coefficiente $\gamma_E$ della funzione beta_0 */
-#define G 1. /* 1.287142 */
+#define G 1.287142
 
 #endif   /* ----- #ifndef pars_INC  ----- */" > ./fit_pars.h
 }
@@ -45,7 +45,7 @@ function create_header () {
 #
 # Definisco i parametri
 #
-STOP=100
+STOP=40
 #B=
 #####################################################################
 
@@ -56,11 +56,12 @@ for (( B = 5; B < 16; B += 5 )); do
 	make fit
 	for i in cu cs en; do
 		# interpolo i tre grafici
-		./fit_${i} ./results/${i}_B${B}.dat
+		echo "#Osservabile: ${i} B: ${B}" >> fit_pars.dat
+		./fit_${i} ./results/${i}_B${B}.dat >> fit_pars.dat
 
 		# sposto i risultati per evitare sovrapposizioni
 		for ext in svg pdf; do
-			mv --update --verbose ${i}.${ext} ./results/${i}_B${B}.${ext}
+			mv --update --verbose ${i}.${ext} ./results/${i}_B${B}.${STOP}.${ext}
 		done
 	done
 	# Pulisco la cartella dai file oggetto

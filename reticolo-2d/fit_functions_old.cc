@@ -21,7 +21,7 @@ Double_t S ( Double_t x ) {
 //		sum += TMath::Exp( - TMath::Pi() * x * n * n );
 
 	/* calcolo le somme assegnando il grado di precisione */
-	Double_t precision = 1., tmp;
+	Double_t precision = .0005, tmp;
 	unsigned int n = 1;
 	do {
 		tmp = TMath::Exp( - TMath::Pi() * x * n * n );
