@@ -2,7 +2,7 @@ Description
 ===========================
 
 This repository contains my C++ source code for simulating an Anti-Ferromagnetic quantum spin lattice in one and two dimensions at very low temperatures.
-The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __sperimentally__ proved to describe the physical system.
+The algorithm is based on the Anti-Ferromagnetic Heisenberg Model, which is __experimentally__ proved to describe the physical system.
 
 
 This work is mostly based on the [studies] [4] of Wiese and Ying, who first adapted the Loop Cluster Algorithm (LCA) to spin lattices.
